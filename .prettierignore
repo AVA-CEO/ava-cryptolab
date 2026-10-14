@@ -1,0 +1,10 @@
+node_modules
+.next
+.venv
+package-lock.json
+requirements.lock
+test-results
+playwright-report
+.tools
+.python-version
+.nvmrc

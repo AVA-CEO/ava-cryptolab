@@ -1,0 +1,23 @@
+{
+  "name": "ava-cryptolab",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @ava/web",
+    "build": "npm run build --workspace @ava/web",
+    "lint": "npm run lint --workspace @ava/web",
+    "typecheck": "npm run typecheck --workspace @ava/web",
+    "test:e2e": "npm run test:e2e --workspace @ava/web",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}
