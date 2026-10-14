@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class DashboardSummary(BaseModel):
-    mode: Literal["empty"] = "empty"
+    mode: Literal["empty", "recorded"] = "empty"
     currency: str = "USD"
     recorded_equity: str | None = None
     realized_pnl: str | None = None

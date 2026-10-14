@@ -3,9 +3,11 @@ from sqlalchemy import select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
+from app.analytics.performance import performance
 from app.database.session import get_session
 from app.models import TradingAccount
 from app.schemas.dashboard import DashboardSummary
+from app.services.journal import all_trades
 
 router = APIRouter()
 
@@ -27,7 +29,19 @@ def ready(session: Session = Depends(get_session)):
 
 @router.get("/dashboard", response_model=DashboardSummary)
 def dashboard(session: Session = Depends(get_session)):
-    # No trade model until Phase 2. Never substitute sample profits for stored records.
+    trades = all_trades(session)
+    if trades:
+        account = session.get(TradingAccount, "local-USD")
+        result = performance(trades, "USD", account.opening_balance if account else None)
+        return DashboardSummary(
+            mode="recorded",
+            total_trades=len(trades),
+            recorded_equity=result["recorded_balance"],
+            realized_pnl=result["net_pnl"],
+            win_rate=result["win_rate"],
+            profit_factor=result["profit_factor"],
+            message="Recorded journal results; use the currency selector.",
+        )
     try:
         accounts = session.scalars(select(TradingAccount)).all()
     except SQLAlchemyError as exc:

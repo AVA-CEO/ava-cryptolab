@@ -1,4 +1,5 @@
 """Initial account schema; no personal or sample trading records."""
+
 import sqlalchemy as sa
 from alembic import op
 
