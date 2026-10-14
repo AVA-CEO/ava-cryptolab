@@ -22,7 +22,7 @@ Backend directory: `../../.venv/Scripts/python.exe -m uvicorn app.main:app --rel
 
 Create migrations with `alembic revision --autogenerate -m "describe the schema change"`. Review generated SQL, run upgrade and check before committing. Only use downgrade on disposable development databases.
 
-If port 3000 is occupied, run `npm run dev --workspace @ava/web -- --port 3001`. Browser tests use 3000, so free that port before tests or update their configuration deliberately. If port 8000 changes, update `API_BASE_URL` and restart Next.js.
+If port 3000 is occupied, run `npm run dev --workspace @ava/web -- --port 3001`. Browser tests use isolated ports 3100 and 8001 and their own database/build folder. If port 8000 changes, update `API_BASE_URL` and restart Next.js. `UPLOAD_DIR` optionally changes screenshot storage; its default is `./uploads` relative to the backend directory and must remain private and ignored.
 
 ## Adding UI
 

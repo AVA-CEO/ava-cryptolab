@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { headers } from "next/headers";
 
 const summarySchema = z.object({
-  mode: z.literal("empty"),
+  mode: z.enum(["empty", "recorded"]),
   currency: z.string(),
   recorded_equity: z.string().nullable(),
   realized_pnl: z.string().nullable(),
@@ -15,6 +16,9 @@ export type DashboardResult =
   { status: "connected"; summary: Summary } | { status: "unavailable" };
 export async function getDashboard(): Promise<DashboardResult> {
   try {
+    const host = (await headers()).get("host")?.split(":")[0];
+    if (host && !["localhost", "127.0.0.1"].includes(host))
+      return { status: "unavailable" };
     const response = await fetch(
       `${process.env.API_BASE_URL ?? "http://127.0.0.1:8000"}/api/v1/dashboard`,
       { cache: "no-store", signal: AbortSignal.timeout(3000) },

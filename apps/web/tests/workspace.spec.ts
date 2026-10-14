@@ -68,9 +68,9 @@ test("theme, route previews and responsive layout", async ({
     .getByRole("link", { name: "Trading Journal", exact: true })
     .click();
   await expect(
-    page.getByRole("heading", { name: "Trading Journal", exact: true }),
+    page.getByRole("heading", { name: "Trading Journal.", exact: true }),
   ).toBeVisible();
-  await expect(page.getByText("Planned for Phase 2")).toBeVisible();
+  await expect(page.getByText("LOCAL PRIVATE JOURNAL")).toBeVisible();
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= window.innerWidth,

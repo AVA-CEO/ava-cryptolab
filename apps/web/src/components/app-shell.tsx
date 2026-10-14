@@ -283,7 +283,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             Trade Smarter.
           </span>
           <span>
-            Research & education <span className="footer-dot">·</span> Phase 1
+            Research & education <span className="footer-dot">·</span> Phase 2
           </span>
         </footer>
       </div>

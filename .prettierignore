@@ -1,5 +1,6 @@
 node_modules
 .next
+.next-e2e
 .venv
 package-lock.json
 requirements.lock

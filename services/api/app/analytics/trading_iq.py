@@ -1,7 +1,7 @@
 """Deterministic descriptive evidence. No signals, AI guesses or causal claims."""
 
 from collections import Counter, defaultdict
-from decimal import Decimal
+from decimal import Decimal, localcontext
 
 from app.analytics.trades import calculate, utc
 
@@ -10,6 +10,12 @@ MIN_GROUP = 5
 
 
 def review(trades, currency):
+    with localcontext() as context:
+        context.prec = 60
+        return _review(trades, currency)
+
+
+def _review(trades, currency):
     selected = [t for t in trades if t.currency == currency]
     closed = [t for t in selected if calculate(t)["status"] == "closed"]
     missing = sum(t.stop_loss is None for t in selected)
@@ -36,7 +42,7 @@ def review(trades, currency):
             for name, values in groups.items()
             if len(values) >= MIN_GROUP
         ]
-        if len(candidates) >= 2:
+        if len(candidates) >= 2 and len({row[1] for row in candidates}) > 1:
             for kind, row in (
                 ("strongest", max(candidates, key=lambda r: r[1])),
                 ("weakest", min(candidates, key=lambda r: r[1])),
@@ -51,7 +57,11 @@ def review(trades, currency):
                     }
                 )
         mistakes = Counter(
-            tag.strip().casefold() for t in closed for tag in t.mistakes.split(",") if tag.strip()
+            tag
+            for t in closed
+            for tag in {
+                value.strip().casefold() for value in t.mistakes.split(",") if value.strip()
+            }
         )
         for tag, count in mistakes.most_common(3):
             if count >= 3:
@@ -66,7 +76,10 @@ def review(trades, currency):
                 )
         for dimension, getter in (
             ("coin", lambda t: t.pair),
-            ("period (UTC month)", lambda t: utc(t.entry_at).strftime("%Y-%m")),
+            (
+                "period (final exit UTC month)",
+                lambda t: max(utc(e.exit_at) for e in t.exits).strftime("%Y-%m"),
+            ),
         ):
             grouped = defaultdict(list)
             for t in closed:
@@ -76,7 +89,7 @@ def review(trades, currency):
                 for name, values in grouped.items()
                 if len(values) >= MIN_GROUP
             ]
-            if len(eligible_groups) >= 2:
+            if len(eligible_groups) >= 2 and len({row[1] for row in eligible_groups}) > 1:
                 for label, row in (
                     ("Highest", max(eligible_groups, key=lambda r: r[1])),
                     ("Lowest", min(eligible_groups, key=lambda r: r[1])),

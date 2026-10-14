@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { AppShell } from "@/components/app-shell";
 import "./globals.css";
+import "@/styles/journal.css";
 
 export const metadata: Metadata = {
   title: {

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
+  devIndicators:
+    process.env.AVA_E2E === "1" ? false : { position: "bottom-right" },
+  distDir: process.env.AVA_E2E === "1" ? ".next-e2e" : ".next",
   poweredByHeader: false,
   async headers() {
     return [

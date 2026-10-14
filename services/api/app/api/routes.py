@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.analytics.performance import performance
 from app.database.session import get_session
-from app.models import TradingAccount
+from app.models import Trade, TradeExit, TradingAccount
 from app.schemas.dashboard import DashboardSummary
 from app.services.journal import all_trades
 
@@ -22,6 +22,8 @@ def ready(session: Session = Depends(get_session)):
     try:
         session.execute(text("SELECT 1"))
         session.execute(select(TradingAccount.id).limit(1))
+        session.execute(select(Trade.id).limit(1))
+        session.execute(select(TradeExit.id).limit(1))
     except SQLAlchemyError as exc:
         raise HTTPException(503, "Database unavailable or migrations not applied.") from exc
     return {"status": "ready", "database": "connected"}

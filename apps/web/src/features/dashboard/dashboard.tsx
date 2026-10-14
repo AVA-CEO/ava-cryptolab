@@ -24,6 +24,7 @@ import {
 } from "./dashboard-cards";
 import { cn, money } from "@/lib/utils";
 import { equitySeries, sampleForDays } from "./sample-data";
+import { JournalWorkspace } from "@/features/journal/workspace";
 
 const Charts = dynamic(() => import("./charts"), {
   ssr: false,
@@ -90,6 +91,9 @@ export function Dashboard({ result }: { result: DashboardResult }) {
         : "Gross wins ÷ absolute gross losses",
     },
   ];
+  if (!sample && summary?.mode === "recorded") {
+    return <JournalWorkspace overview onSample={() => setSample(true)} />;
+  }
   return (
     <div className="page-content">
       <div className="page-heading">
@@ -294,10 +298,10 @@ export function Dashboard({ result }: { result: DashboardResult }) {
                 <p>
                   Your trades and reflections will appear here.
                   <br />
-                  Trade recording arrives in Phase 2.
+                  Record your first trade in the journal.
                 </p>
                 <Link href="/journal" className="text-link">
-                  See what’s coming
+                  Open trading journal
                   <ArrowRight size={14} />
                 </Link>
               </div>

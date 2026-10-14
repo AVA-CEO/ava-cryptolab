@@ -1,5 +1,13 @@
 # Architecture
 
+## Phase 2 extension
+
+The journal now has its own route, feature components, client forms, API bridge and backend router. Trades own exit executions via a cascading relationship. Version columns reject stale edits. Pure Decimal services calculate risk and outcomes; a separate evidence engine produces Trading IQ findings. See [the journal specification](trading-journal.md) for calculation policies and [Trading IQ](trading-iq.md) for evidence thresholds.
+
+The Next.js bridge keeps browser requests on the frontend origin and permits local hostnames only. Backend mutation guards reject untrusted browser origins and limit request volume. These safeguards are not authentication; the public deployment gate remains. CSV import validates the batch before writing; screenshot processing checks raster content and strips metadata.
+
+The sections below record the Phase 1 baseline and its evolution plan; the journal work described as planned there is now implemented as the Phase 2 extension above.
+
 ## Boundaries
 
 The Next.js application shell provides navigation and branding. Dashboard features live under `src/features/dashboard`; chart code is loaded only when used. Server components fetch the FastAPI summary, validate it with Zod and pass a typed result to the client UI. No browser API key or cross-origin backend access is required.

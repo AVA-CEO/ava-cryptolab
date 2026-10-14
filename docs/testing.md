@@ -1,5 +1,13 @@
 # Testing
 
+## Phase 2 coverage
+
+Backend coverage now includes trade CRUD, stale versions, linear long/short and spot inventory PnL, funding credits, partial exits, closed-only aggregate metrics, validation failures, currency separation, decimal persistence, CSV atomic validation and duplicate protection, screenshot validation/cleanup, local mutation guards and Trading IQ sample thresholds.
+
+Playwright starts a disposable API/database on port 8001 and a frontend on port 3100 configured to reach that API. Tests run serially against this shared disposable environment. They cover create/view/edit/search/delete flows and form feedback on desktop/mobile as well as the existing workspace flows. Free ports 3100 and 8001 before tests. The frontend uses the ignored `.next-e2e` build folder. This setup never connects to the personal development database. CI installs backend dependencies for the browser job too.
+
+Use the README validation commands. The original Phase 1 notes follow for context.
+
 Backend tests use an isolated in-memory SQLite database and dependency overrides. They cover health, schema readiness, empty financials, stored balances and unsupported currency aggregation. They never use local trading records.
 
 Playwright covers empty onboarding, entering/exiting labelled sample mode, date selection, chart selection, theme persistence, module navigation and page overflow at desktop and mobile dimensions. The web server is started automatically. An API is not required for these UI flows; offline status is an intentional supported state. Live API connectivity is checked separately.

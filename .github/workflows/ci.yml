@@ -18,6 +18,12 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run build
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m venv .venv
+      - run: .venv/bin/python -m pip install -r services/api/requirements.lock
+      - run: .venv/bin/python -m pip install --no-deps -e services/api
       - run: npx playwright install --with-deps chromium
         working-directory: apps/web
       - run: npm run test:e2e

@@ -35,7 +35,14 @@ Reference for linear contract PnL: [Bybit’s published calculation guidance](ht
 Download the empty template from the journal. One row represents one trade. The `exits` column contains a JSON array such as:
 
 ```json
-[{"exit_at":"2025-01-02T12:00:00Z","price":"110","quantity":"2","fees":"1"}]
+[
+  {
+    "exit_at": "2025-01-02T12:00:00Z",
+    "price": "110",
+    "quantity": "2",
+    "fees": "1"
+  }
+]
 ```
 
 This is a format example, not a market observation. Other fields match the form. Export follows current filters. Imports accept UTF-8, at most 2 MB and 1,000 rows; every row is validated before the transaction commits. Existing IDs and equivalent record fingerprints are skipped, not overwritten. Exported text fields beginning with spreadsheet formula markers are prefixed with an apostrophe. Screenshot bytes are not exported. Database IDs are for duplicate detection, not record reassignment.

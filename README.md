@@ -4,7 +4,19 @@
 
 A cryptocurrency research, trading journal and education platform built incrementally as a full-stack engineering project. It helps explain trading decisions and market mechanics without profit promises or exchange execution.
 
-## Phase 1: Foundation
+## Current milestone: Phase 2 — Advanced Trading Journal
+
+- Persisted trade creation, viewing, editing and confirmed deletion.
+- Spot inventory and linear futures, partial exit executions, initial stops/targets, fees, funding, leverage and margin type.
+- Setup and mistake tags, notes, before/after emotions, lessons and validated private screenshot attachments.
+- Decimal-based PnL and R, expectancy, profit factor and closed-trade drawdown. USD, USDT and USDC remain separate.
+- Searching, date/strategy/exchange/status/outcome filtering, sorting, pagination and transactional CSV import/export.
+- Interactive closed-performance charts and duration/risk/entry-hour-versus-R scatterplots.
+- AVA Trading IQ evidence rules with transparent minimum observation counts.
+
+See the [journal guide](docs/trading-journal.md), [Trading IQ architecture](docs/trading-iq.md) and [Phase 2 report](docs/phase-2.md).
+
+### Foundation retained from Phase 1
 
 - Next.js App Router, TypeScript and Tailwind CSS; shadcn-style reusable button, Lucide icons, Motion and Recharts.
 - Responsive command center with collapsible navigation, mobile menu, workspace search, light/dark themes and honest empty states.
@@ -13,7 +25,7 @@ A cryptocurrency research, trading journal and education platform built incremen
 - API health/readiness, validated server-side frontend integration, backend tests and Playwright flows.
 - GitHub Actions for lint, types, build, backend tests, migration validation and browser tests.
 
-The dashboard starts empty. **No personal trades or live market prices are seeded.** Sample mode is simulated, ephemeral and never written to the database. Other module routes describe their planned milestones; they do not implement those features yet.
+The dashboard starts empty. **No personal trades or live market prices are seeded.** After you save trades, the command center displays recorded journal analytics. Sample mode remains simulated, ephemeral and separate from the database. Market, academy, lab and trivia routes remain roadmap previews.
 
 ## Run locally (PowerShell)
 
@@ -73,8 +85,8 @@ docs/             Architecture, setup, tests and deployment notes
 .github/workflows/ Automated validation
 ```
 
-1. **Foundation** — current milestone.
-2. **Journal** — CRUD, executions, risk calculations, performance charts and CSV.
+1. **Foundation** — completed.
+2. **Journal** — current milestone: CRUD, executions, risk calculations, performance charts, CSV and Trading IQ foundations.
 3. **Market intelligence** — provider adapters, caching, screener and watchlists.
 4. **Academy** — curated learning paths, lessons and server-validated quiz attempts.
 5. **Gamification** — achievements, streaks and minigames.
@@ -83,6 +95,8 @@ docs/             Architecture, setup, tests and deployment notes
 Read [architecture](docs/architecture.md), [deployment preparation](docs/deployment.md) and [contribution guidelines](CONTRIBUTING.md).
 
 ## Connect to GitHub
+
+Beginner walkthrough: [connect Git to GitHub](docs/github.md). Local commits are already created; no remote is configured or pushed by the agent.
 
 Create an **empty** repository named `ava-cryptolab` in GitHub (no generated README or licence). Then:
 
