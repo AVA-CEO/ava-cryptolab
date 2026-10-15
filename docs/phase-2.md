@@ -1,5 +1,7 @@
 # Phase 2 — Advanced Trading Journal
 
+Status: **closed following owner-reported manual acceptance**. All nine planned manual scenarios were reported passed by the owner in the isolated practice journal. These are human observations, not automated tests performed by Codex. See the [acceptance report](phase-2-acceptance.md).
+
 Phase 1 was finalized with the owner-confirmed repository-local author identity. The journal backend was committed as `feat(api): add journal ledger analytics and Trading IQ evidence rules`. The frontend milestone completes the journal experience while retaining the purple identity and using green for profits, successful actions and closed trade status.
 
 ## Working features
@@ -25,7 +27,7 @@ Phase 1 was finalized with the owner-confirmed repository-local author identity.
 - Runtime npm audit: zero vulnerabilities. The known development-only braces advisory remains documented.
 - Visual review covered recorded-trade journal screenshots at desktop and mobile sizes. Those images use disposable synthetic test inputs; they are not market observations or personal trading results.
 
-The final commit includes the source cleanup and its final revalidation. GitHub Actions are configured but have not run remotely because nothing is pushed. PostgreSQL deployment/runtime and public multi-user authorization are not verified by these local checks. Starlette emits the existing TestClient deprecation warning.
+The implementation commits are published to the private GitHub repository. The latest GitHub Actions run, [Quality checks #1](https://github.com/AVA-CEO/ava-cryptolab/actions/runs/38755310672), completed successfully for both web and API on commit `6a4cee687d6c8745082fcbf5af1aba34ab3ffaf6`; its status was rechecked during closure. The new closure documentation has not been pushed or run remotely. PostgreSQL deployment/runtime and public multi-user authorization remain unverified. Starlette emits the existing TestClient deprecation warning.
 
 ## Limits
 
@@ -65,6 +67,6 @@ npm run format:check
 npm run test:e2e
 ```
 
-Browser tests reserve ports 3100 and 8001; their `.next-e2e` folder and databases are separate from the normal development preview. See [GitHub connection instructions](github.md) to connect a repository. No remote, push or public publication was performed.
+Browser tests reserve ports 3100 and 8001; their `.next-e2e` folder and databases are separate from the normal development preview. Do not run them over an active practice session. The owner completed manual acceptance at `http://127.0.0.1:3100/journal` using the isolated practice API on port 8001. See [GitHub connection instructions](github.md). The three implementation commits were pushed with explicit authorization; no application deployment or repository visibility change occurred. New commits require separate push authorization.
 
-Next milestone: review real journal use and clarify any calculation-policy needs, then Phase 3 market provider integration with source timestamps, caching and failure-state tests.
+Next priority: [Phase 2B — Multi Asset Trading Expansion](phase-2b-plan.md), ahead of Phase 3. Its design direction is approved; coding, migrations and broker connections still require explicit authorization. Existing functionality and the purple visual identity remain requirements.
