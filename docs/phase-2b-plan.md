@@ -1,6 +1,6 @@
 # Phase 2B — Multi Asset Trading Expansion plan
 
-Status: **design approved; implementation awaiting explicit owner authorization**. Phase 2 manual acceptance is complete on the owner's report. Phase 2B now takes priority over Phase 3.
+Status: **implementation authorized by the owner** after Phase 2 manual acceptance. Phase 2B takes priority over Phase 3. The first implementation milestone is [2B.1: account and instrument contracts](phase-2b-1.md). Authorization does not include remote pushes, broker connections or live execution.
 
 The [architecture proposal](multi-asset-expansion.md) is the detailed policy reference. These milestones divide it into reviewable increments. Proposed file names can be refined after code inspection; they are not files created by this documentation milestone.
 
@@ -75,4 +75,4 @@ Before every coding milestone, explain what is being built, why it matters, how 
 
 Each authorized implementation milestone needs applicable unit/integration checks, documented manual checks, meaningful local commits and honest limitations. Remote pushes require separate approval. Do not rebuild working features or broaden into Phase 3 without agreement. No secrets, private statements, personal trading data or database files may enter commits.
 
-The next immediate decision is explicit authorization to begin 2B.1. This plan and its commit do not grant that authorization.
+The owner explicitly authorized Phase 2B implementation after this plan was committed. Work proceeds in the increments above, with explanations and validation at each milestone. Optional broker connections and remote pushes retain their separate authorization gates.

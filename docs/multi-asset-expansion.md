@@ -1,8 +1,8 @@
 # Multi-asset journal: proposed development milestone
 
-Status: design direction approved; implementation is NOT authorized.
+Status: design approved; Phase 2B implementation subsequently authorized by the owner.
 
-Phase 2 manual acceptance is complete: the owner reported all nine scenarios passed in the isolated practice journal. See the [acceptance report](phase-2-acceptance.md). This expansion is now prioritized as **Phase 2B, before Phase 3**, following the [milestone plan](phase-2b-plan.md). Explicit implementation authorization is still pending. This document does not authorize application changes, database migrations, broker connections, scheduled synchronization, remote pushes or deployment.
+Phase 2 manual acceptance is complete: the owner reported all nine scenarios passed in the isolated practice journal. See the [acceptance report](phase-2-acceptance.md). The owner subsequently authorized **Phase 2B, before Phase 3**, following the [milestone plan](phase-2b-plan.md). Application work and migration development proceed in those increments; the initial contract milestone makes no database changes. Broker connections, scheduled synchronization, remote pushes and deployment remain separately gated.
 
 ## Product and interface
 
