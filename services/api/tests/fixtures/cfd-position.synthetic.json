@@ -1,0 +1,83 @@
+{
+  "trade": {
+    "schema_version": "cfd-input-v1",
+    "account": {
+      "account_id": "synthetic-account",
+      "name": "Synthetic teaching account",
+      "broker": "Synthetic broker",
+      "platform": "mt5",
+      "server": "Synthetic server",
+      "reporting_currency": "USD",
+      "settlement_currency": "USD"
+    },
+    "snapshot": {
+      "snapshot_id": "synthetic-eurusd-snapshot-v1",
+      "content_sha256": "2dd53251d1959009f06bcc4832a4dd01440aaeb3323fa68b158fc9f41c1441d2",
+      "specification": {
+        "instrument_id": "synthetic-eurusd",
+        "symbol": "EURUSD",
+        "broker": "Synthetic broker",
+        "venue": "Synthetic server",
+        "product": "cfd",
+        "market_category": "forex",
+        "calculation_mode": "forex",
+        "quantity_unit": "lots",
+        "profit_currency": "USD",
+        "settlement_currency": "USD",
+        "tick_size": "0.00001",
+        "volume_min": "0.01",
+        "volume_step": "0.01",
+        "volume_max": "100",
+        "contract_size": "100000",
+        "pip_size": "0.0001",
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching fixture; not a Bybit specification",
+          "effective_at": "2025-01-01T00:00:00Z",
+          "captured_at": "2025-01-02T00:00:00Z"
+        }
+      }
+    },
+    "direction": "buy",
+    "entry": {
+      "execution_id": "synthetic-entry",
+      "executed_at": "2025-01-03T00:00:00Z",
+      "price": "1.10000",
+      "lots": "0.10"
+    },
+    "exits": [
+      {
+        "execution_id": "synthetic-exit-1",
+        "executed_at": "2025-01-04T00:00:00Z",
+        "price": "1.10200",
+        "lots": "0.04"
+      },
+      {
+        "execution_id": "synthetic-exit-2",
+        "executed_at": "2025-01-05T00:00:00Z",
+        "price": "1.10300",
+        "lots": "0.06"
+      }
+    ],
+    "original_stop": "1.09800",
+    "planned_take_profit": "1.10300",
+    "adjustments": [],
+    "reporting_policy": "explicit_rates",
+    "conversions": []
+  },
+  "rounding": {
+    "currencies": [
+      {
+        "currency": "USD",
+        "decimal_places": 2
+      }
+    ],
+    "rounding": "ROUND_HALF_EVEN",
+    "ratio_places": 6,
+    "movement_places": 6
+  },
+  "schema_version": "cfd-position-v1",
+  "position_reference": "synthetic-position-1",
+  "as_of": "2025-01-05T00:00:00Z",
+  "recognition_policy": "incurred_once"
+}

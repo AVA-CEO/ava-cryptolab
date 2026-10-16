@@ -1,5 +1,17 @@
 # Testing
 
+## Phase 2B.3C position checks
+
+The [position report](phase-2b-3c.md) records **439 backend passes**: previous 357 plus 82 new cases. Synthetic tests cover the owner's 8 + 18 USD example, four incurred costs, open/partial/closed cutoffs, shorts/losses, JPY rates, metals, invalid ledgers, comparison evidence, exact rounding and maximum ledger cardinality. Existing single-close and crypto regressions remain intact; normal journal data and backups are never test targets.
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py services/api/tests/fixtures/cfd-position.synthetic.json
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py services/api/tests/fixtures/cfd-position-costs.synthetic.json --json
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q
+```
+
+Expect 26 USD / 1.30R without costs and 22 USD / 1.10R with the supplied costs. Numeric synthetic comparison agreement is not real-statement reconciliation. All commands use the existing environment; there are no new dependencies or migrations.
+
 ## Phase 2B.3B calculation checks
 
 The [calculator report](phase-2b-3b.md) records **357 backend passes**, including the previous 266 and 91 new cases. Synthetic hand-worked expectations cover EURUSD/GBPUSD longs and shorts, JPY-profit/USD-reporting cases, supplied gold/silver contract sizes, signed costs, original risk and R, unavailable inputs, precision and rounding. Independent `Fraction` cash ledgers verify exact results, including extreme input/FX products. These are synthetic calculation checks, not real broker reconciliation.

@@ -192,3 +192,58 @@ Open the private copy in VS Code. Under `trade.exits`, change the single exit's 
 ```
 
 Expect −10 USD gross, −14 USD net, 10 USD original planned risk and −1.4R. Costs can make a stop-price loss larger than the original price-risk estimate. Restore the exit price for the original 6 USD net and 0.6R. Add `--json` to inspect the raw amounts and policy. You have learned units, signed cash flows, original-risk denominators and the difference between calculation and display rounding. This exercise does not touch your normal journal or backups.
+
+## 2B.3C — closing a position in pieces
+
+Imagine a box containing ten identical items. You sell four today and six tomorrow. You began with ten, sold four and have six remaining after the first sale. Counting tomorrow's sale today would give the wrong answer, so our calculator asks for an explicit `as_of` time: a financial snapshot at a chosen moment.
+
+| Trading term       | Simple meaning                                                                     |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| Original lots      | Quantity opened at entry; it stays the starting reference                          |
+| Exited lots        | Quantity actually closed by the chosen cutoff                                      |
+| Remaining lots     | Original minus exited quantity                                                     |
+| Gross realized PnL | Price profit/loss from those completed exits, before recorded costs                |
+| Realized net PnL   | Gross realized PnL plus included incurred costs/credits                            |
+| Unrealized PnL     | Valuation of the still-open portion at a separate supplied price; unavailable here |
+
+### Follow the owner's example
+
+The synthetic EURUSD buy opens 0.10 lots at 1.10000 with a supplied 100,000-unit contract. Closing 0.04 lots at 1.10200 realizes 8 USD and leaves 0.06 lots. Closing those 0.06 at 1.10300 adds 18 USD, bringing gross to 26 USD. The original stop is 1.09800, so original planned risk is 20 USD throughout.
+
+At the first exit, no-cost realized R is 8/20 = 0.40. At full closure it is 26/20 = 1.30. We do not replace the denominator with the quantity remaining. With 4 USD of costs the final net is 22 USD, or 1.10R. Planned price risk remains an estimate, not broker margin or guaranteed maximum loss.
+
+### One receipt, one recognition
+
+Each recorded cost has a unique ID, occurrence time, signed amount, currency and source. Think of stamping a receipt once. The entry commission is recognized in full when incurred; it is not stamped again for every exit. Exit fees link to actual execution IDs. Swaps/other costs follow their own timestamps. Component views explain the same costs; they are not extra charges to add again.
+
+Our policy is called `incurred_once`. It can show an open position with negative realized net from an actual entry commission even before the first exit. That is recorded cash cost, not an estimate of unrealized loss. Partial/open outcomes are not classified as completed-trade wins/losses. Duplicate IDs reject the request; detecting accidentally duplicated economic charges with different IDs needs future import provenance, not a guess.
+
+### Dates, currencies and evidence
+
+Every included exit uses its own supplied conversion observation. Two JPY profits on different days can use different JPY→USD rates. Original risk uses its entry-time rate. We retain native amounts and mark missing converted totals unavailable.
+
+Reconciliation means comparing two independently preserved records. Our foundation keeps calculated and reported amounts side by side, checks position/account/instrument, lot coverage, time, currency and accounting basis, then shows a difference with an explicit tolerance. Numerical agreement in a synthetic exercise does not prove a real broker statement was reconciled. No real statement has been tested.
+
+### Practical exercise — move the financial clock
+
+From the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py services/api/tests/fixtures/cfd-position.synthetic.json
+New-Item -ItemType Directory -Force private/exercises | Out-Null
+Copy-Item services/api/tests/fixtures/cfd-position.synthetic.json private/exercises/cfd-position.json
+```
+
+In the private copy, change the top-level `as_of` from `"2025-01-05T00:00:00Z"` to `"2025-01-04T00:00:00Z"`, then run:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py private/exercises/cfd-position.json
+```
+
+Expect state partial, 0.04 exited lots, 0.06 remaining, gross/net 8 USD, original risk 20 USD and 0.40R. The later exit remains in the input ledger but is deferred from this financial snapshot. Restore the original cutoff for 26 USD and 1.30R. Then run the cost example:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py services/api/tests/fixtures/cfd-position-costs.synthetic.json
+```
+
+Expect four recognized cost records totalling −4 USD, net 22 USD and 1.10R. Add `--json` to inspect the IDs and separate synthetic comparison evidence. The commands read files and return calculations; they do not save journal trades. You learned event-ledger accounting, time cutoffs, immutable original risk, explicit cost recognition and evidence comparison.

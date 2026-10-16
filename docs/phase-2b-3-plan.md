@@ -1,6 +1,6 @@
 # Phase 2B.3 proposal — Forex and CFD calculation engines
 
-Status: **2B.3A inputs and 2B.3B single-close linear calculator implemented with owner authorization**. See the [2B.3B report](phase-2b-3b.md). The [2B.3C partial-closure/reconciliation proposal](phase-2b-3c-plan.md) awaits separate implementation approval. The normal SQLite migration was previously approved and [verified](migration-0003-verification.md); calculation milestones make no database changes. Broker connections, CFD-entry screens and new migrations remain outside these milestones.
+Status: **2B.3A inputs, 2B.3B single-close and 2B.3C partial-position accounting implemented with owner authorization**. See the [2B.3B report](phase-2b-3b.md) and [2B.3C accounting policy/report](phase-2b-3c.md). The normal SQLite migration was previously approved and [verified](migration-0003-verification.md); calculation milestones make no database changes. Broker connections, CFD-entry screens and new migrations remain outside these milestones.
 
 ## Architecture and purpose
 
@@ -108,6 +108,6 @@ Likely test files are `services/api/tests/test_cfd_calculations.py` and a fixtur
 
 Before coding, walk through the example together, identify units on every multiplication and explain each field. After coding, provide exact test commands and an in-memory example; report actual results and unresolved limits. The milestone teaches separation of financial models, Decimal precision, pure functions, product dispatch and testable accounting policies.
 
-## 2B.3C review gate
+## Application integration review gate
 
-The owner separately authorized 2B.3B, which is complete. **2B.3C has not been implemented and needs owner authorization.** Its [review plan](phase-2b-3c-plan.md) covers partial-closure accounting and broker-reported comparison evidence. Tick metadata validation does not imply that historical tick-mode valuation is ready; that remains a separate evidence/design gate.
+The owner separately authorized 2B.3C, now complete. The [2B.4 integration proposal](phase-2b-4-plan.md) awaits approval before account workflows, reviewed persistence and forms. Real broker-statement reconciliation has not been performed. Tick metadata validation does not imply that historical tick-mode valuation is ready; that remains a separate evidence/design gate.

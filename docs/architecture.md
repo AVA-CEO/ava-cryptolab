@@ -1,5 +1,11 @@
 # Architecture
 
+## Phase 2B.3C position accounting
+
+The separate `analytics/cfd_positions.py` engine accepts `CfdPositionRequest` with an explicit cutoff and `incurred_once` policy. It reuses the single-close engine's mode allowlist and result builder while computing each included exit and cost once. Original risk remains fixed; partial/open results do not supply completed-trade outcome classifications. Native/reporting figures remain separately labelled, and unrealized PnL remains unavailable without a valuation contract.
+
+Frozen broker-evidence contracts and `analytics/cfd_reconciliation.py` preserve reported values separately and compare only matching scope, quantities, currency, time and accounting basis. No reported figure replaces a calculated amount. See the [policy/report](phase-2b-3c.md) and [application-integration review plan](phase-2b-4-plan.md). The existing single-close/crypto engines, product dispatcher, journal UI/API, database models and migrations are unchanged.
+
 ## Phase 2B.3B independent calculation engine
 
 The [single-close CFD calculator](phase-2b-3b.md) accepts a validated trade plus explicit per-currency rounding policy. `analytics/cfd.py` performs pure Decimal accounting for an allowlist of linear calculation modes; `schemas/cfd_results.py` separates raw money, rounded display values and unavailable reasons. Native profit remains visible before explicit cash-flow-time reporting conversions. A fresh 160-digit Decimal context keeps cash operations exact over the bounded input domain; ratios use that finite precision. No rate is fetched or inferred.

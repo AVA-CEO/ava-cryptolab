@@ -1,6 +1,6 @@
 # Proposed Milestone 2B.3C — partial closures and reconciliation foundations
 
-Status: **review proposal only; implementation awaits explicit owner authorization**. Milestone 2B.3B implements one entry and one fully closing exit. This plan does not enable partial calculations, import broker files or modify the database.
+Status: **implemented following explicit owner authorization**. Read the [accounting policy and implementation report](phase-2b-3c.md). The original pre-implementation proposal below is retained for design history; the implementation adds no broker-file parser or database changes. The next [2B.4 integration plan](phase-2b-4-plan.md) awaits review.
 
 ## Why this is a separate step
 
@@ -40,7 +40,7 @@ Proposed files: `schemas/cfd_reconciliation.py`, `analytics/cfd_reconciliation.p
 
 Test open→partial→closed states, irregular fractional exits, simultaneous exit timestamps, cost credits/debits, entry and exit fee recognition, duplicate IDs, over-close rejection, mixed currencies/rates, missing stops, missing conversion coverage and explicit cutoffs. Compare exit totals against independent hand-worked cash ledgers. Preserve all crypto and single-close regressions, frontend checks, isolated build and disposable browser tests.
 
-The teaching exercise will close a synthetic 0.10-lot EURUSD position in 0.04 and 0.06 lots at different supplied prices, inspect remaining lots after each exit, then explain why the original risk denominator did not change. This exercise is not implemented yet.
+The implemented teaching exercise closes a synthetic 0.10-lot EURUSD position in 0.04 and 0.06 lots, inspects remaining lots at each cutoff and explains the unchanged original risk. See the report and learning journal for exact commands.
 
 ## Approval boundary
 
