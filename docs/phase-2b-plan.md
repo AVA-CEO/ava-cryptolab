@@ -24,7 +24,17 @@ The [implementation and rehearsal report](phase-2b-2.md) records the additive sc
 - Learn: primary/foreign keys, nullable transitional fields, data backfills, transactions and restoration procedures.
 - Verify: migrate a disposable legacy fixture and a private backup copy; confirm IDs/counts/references and legacy calculations survive. Check SQLite and PostgreSQL migration compatibility with explicit results; do not claim PostgreSQL verification unless actually run. No destructive rollback against personal data.
 
-## 2B.3 — Independent account management
+## 2B.3 — Forex and CFD calculation engines
+
+Priority updated at the owner's request after 2B.2: calculation engines now precede account-management screens. See the [detailed architecture, formulas and tests](phase-2b-3-plan.md). This remains a plan until the normal migration gate is resolved; no CFD calculation code is part of the backup checkpoint.
+
+- Build: pure, independent Python forex/CFD calculators and validated execution/cost inputs, using historical instrument snapshots and explicit currencies. No new CFD-entry UI or broker connection in this first calculation step.
+- Why/how: lots and contract specifications determine a CFD's calculation mode. An explicit product dispatcher prevents crypto quantity math being applied to CFDs. Missing rates or specifications produce unavailable output, not invented values.
+- Proposed files: `services/api/app/analytics/cfd.py`, CFD input schemas, product dispatch and calculation tests. Keep existing crypto calculations unchanged.
+- Learn: Decimal arithmetic, units, pure functions, explicit cash-flow accounting and product-based dispatch.
+- Verify: synthetic long/short forex, JPY/cross pairs and gold/silver; partial exits, signed costs, rounding, missing data, no leverage multiplier and no spread double counting. Broker reconciliation remains a separate evidence gate.
+
+## 2B.4A — Independent account management
 
 - Build: create/edit/select accounts with currencies, balances, cash flows, risk settings and separate journal/analytics views. Preserve a clear legacy-record assignment workflow.
 - Why/how: an account is a separate ledger. Filtering alone is insufficient: all reads, writes, imports and calculations must enforce the chosen account association. Transfers and deposits are not trading profits.
@@ -32,9 +42,9 @@ The [implementation and rehearsal report](phase-2b-2.md) records the additive sc
 - Learn: database relationships, API scoping, React state and server-side validation. Account separation within a local app does not replace user authorization for future multiuser deployment.
 - Verify: create two practice accounts with different currencies and risk limits; a trade, balance update or import in one must not change the other. Test legacy assignment and internal transfer accounting without double counting.
 
-## 2B.4 — CFD calculator and manual journal entry
+## 2B.4B — Manual CFD journal entry
 
-- Build: independent supported forex/CFD calculation engines, lot/contract/tick/pip validation, partial exits, commissions, signed swaps and native-currency PnL; connect them to conditional manual-entry fields. Keep broker and calculated PnL separate. TradFi perpetuals use verified contract-specific rules and remain a separate product category.
+- Build: connect the separately tested 2B.3 engines to account-scoped journal APIs and conditional manual-entry fields, with partial exits, commissions, signed swaps and native-currency PnL. Keep broker and calculated PnL separate. TradFi perpetuals use verified contract-specific rules and remain a separate product category.
 - Why/how: lots describe a number of contracts, not crypto coin quantity. Dispatch by calculation mode; snapshot the specifications used. Unsupported modes or missing conversion inputs return unavailable metrics instead of guessed totals.
 - Proposed files: `services/api/app/analytics/cfd.py`, calculator dispatch, CFD schemas/services, `apps/web/src/features/journal/trade-form.tsx`, trade details and calculation tests.
 - Learn: Decimal arithmetic, dimensional units, strategy-based calculators and conditional forms. Pip size differs from tick size; leverage affects margin rather than multiplying price-movement profit.
