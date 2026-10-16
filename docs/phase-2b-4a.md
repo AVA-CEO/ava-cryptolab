@@ -1,5 +1,7 @@
 # Milestone 2B.4A — local practice account management
 
+Status: **accepted and closed by the owner on 2026-10-17**. All eight practice scenarios passed according to the owner's manual observations. See the [user-reported acceptance report](phase-2b-4a-acceptance.md); these are separate from the previously measured automated tests. 2B.4B remains design review only, with no implementation authorized.
+
 ## Working scope
 
 The Accounts area creates and lists manually recorded accounts, selects an account, and reviews its compatible instrument specification history. Accounts record broker, platform, optional server/non-secret reference, reporting currency and settlement currency. No balances or currency conversions are inferred. All accounts in this milestone are in an ephemeral practice workspace; a persistent demo/live account classification is deferred.
@@ -68,6 +70,6 @@ Measured local validation on 2026-10-16:
 - Normal database and both preserved backup SHA-256 fingerprints matched the private baseline. Models, migrations, analytics engines, original persistence service and legacy journal feature files have no changes. No normal migration or data write was performed.
 - The changed-file path/signature scan found no credentials or private/generated files in the commit candidates. Ignore rules cover databases, environment files, private backups and all three build directories. This scan is a targeted check, not a claim that every possible secret format can be detected.
 
-The owner-authorized `d4ffab4` push was verified on GitHub; repository visibility is private and Actions run `38885471028` has successful `api` and `web` jobs. The 2B.4A commit is local only until separately authorized.
+The owner-authorized `d4ffab4` push was verified on GitHub; Actions run `38885471028` passed `api` and `web`. The owner subsequently authorized pushing **`a00860a`**; that push was verified on `main`, repository visibility remained private, and [Actions run `38973742171`](https://github.com/AVA-CEO/ava-cryptolab/actions/runs/38973742171) passed both jobs. No deployment occurred. These are the recorded results from the push tasks, not a new CI run caused by this closure documentation.
 
 During development, tests caught a snapshot-error wording mismatch, an ambiguous platform label and an ambiguous Next.js alert selector. React lint also identified a loading-effect issue. These were corrected and relevant checks rerun. Routine browser notices about reduced motion and terminal colors are non-failing.

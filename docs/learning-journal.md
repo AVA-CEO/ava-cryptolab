@@ -267,3 +267,27 @@ The practice runner creates a temporary filing cabinet, and the normal journal's
 Follow [the practice commands](phase-2b-4a.md#try-it-safely). Create the synthetic MT5 account and paste the fixture's `snapshot.specification` object. Save it, then change its contract size and save again. Review both IDs and content hashes: the account ID remains the same, while the changed specification receives a different snapshot ID. Save identical content again and confirm there are still two versions. Try changing the broker and confirm rejection. Stop the practice API when finished; its records are discarded.
 
 You have practiced React form state, TypeScript boundary validation, HTTP requests, Python validation, SQLAlchemy persistence, immutable version history and isolated testing. None of these steps places an order.
+
+## Milestone 2B.4A acceptance and 2B.4B design review — safe saves
+
+On **2026-10-17** you reported passing all eight manual Accounts scenarios and accepted 2B.4A. Those are your observations, not eight new automated tests. Automated tests repeatedly check programmed rules; manual acceptance checks whether the real experience works for you. Neither kind should be relabelled as the other.
+
+The next design adds a CFD filing cabinet beside the existing crypto cabinet. A **database relationship** is a checked label: a position points to its account and the exact instrument rule card. A foreign key stops it pointing to a nonexistent record. Python must also check meaning—for example, an MT5 CFD account cannot use a crypto futures specification merely because that specification has a valid ID.
+
+An **API endpoint** is a service desk with an address. A future preview desk would calculate without saving; a save desk would validate and store a complete, numbered revision. TypeScript helps prepare the request; FastAPI receives it; Pydantic checks its shape and financial units; Python Decimal calculates; SQLAlchemy stores it. The proposed [flow diagram and schema](phase-2b-4b-design-review.md) show this journey. None of those new CFD endpoints exists yet.
+
+An **atomic transaction** is an all-or-nothing envelope. If saving an exit succeeds but saving its commission fails, rollback discards the entire attempt. You should never see half a trade saved. A rollback can cancel staged work before commit; it is not permission to erase a previously committed historical trade.
+
+**Idempotency** means retrying one request has one effect. Imagine clicking a lift button twice: it should not create a second lift. A numbered save key acts like a receipt. If the network loses the reply, retrying the same key and same data returns the already saved result. Reusing the key with different data is an error. Giving the same trade completely new IDs can still look like a new request, so IDs and future broker-import rules matter too.
+
+**Optimistic concurrency** prevents one old browser tab overwriting another tab's newer work. Both tabs open page 3. Tab A saves page 4. Tab B still presents page 3, so the server asks it to reload rather than erasing page 4. The proposed HTTP `If-Match` header carries that expected version; a database comparison makes the check atomic.
+
+An **immutable revision** is a retained page of history. A correction adds page 4 and moves the bookmark; page 3 remains available. Original entry, specification and risk basis stay fixed within the position. A genuinely mistaken original basis would require an explicit void-and-replacement workflow. Archive hides a record from current views; it is not permanent deletion.
+
+Decimal strings preserve exact written quantities. A calculation manifest records which recipe and rounding rules were used. Saving the same inputs, dated rates, recipe version and result lets us check it again later. A hash is a fingerprint that detects changed content; it does not prove a broker supplied the numbers.
+
+### Paper exercise — two tabs and a lost reply
+
+No database or new code is needed. Draw a position at version 3 with net PnL 8 USD. Pretend two tabs both opened it. Tab A submits key `practice-A`, expected version 3, and saves version 4 with net PnL 26 USD. Its reply is lost. What should happen when A retries the same key/data? **Return the original version-4 receipt, without another revision.** Now tab B submits a different edit expecting version 3. What should happen? **Reject the stale edit and ask B to reload.** If A instead reuses `practice-A` with different data, reject that key conflict. Keep pages 3 and 4 on your paper: this is the history we want the future database to preserve.
+
+This is a design exercise only. You have learned relationships, API boundaries, atomic transactions, idempotency, optimistic concurrency and revision history. **2B.4B implementation, migration 0004 and normal-database access remain unauthorized.**

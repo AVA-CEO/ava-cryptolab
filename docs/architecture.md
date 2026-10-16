@@ -2,6 +2,8 @@
 
 ## Phase 2B.4A practice account boundary
 
+2B.4A is accepted on eight owner-reported manual passes. The next [CFD persistence design review](phase-2b-4b-design-review.md) proposes separate immutable ledger revisions, current pointers, dated evidence and retry receipts through an additive 0004. That design is **not implemented or authorized for implementation**; existing runtime architecture remains unchanged.
+
 The `/accounts` React workspace talks through a local Next.js management bridge to a separate FastAPI router. Pydantic validates account identities and documented instrument specifications; SQLAlchemy services reuse the existing revision-0003 tables within explicit transactions. Snapshot history is append-only and identical content reuses its hash identity. No legacy trade assignment or calculator change is performed.
 
 Both reads and writes require loopback access and a local header. Management is disabled by default and checks the actual session database target: only disposable SQLite practice paths are permitted. This boundary does not provide production authentication. Compatible broker/server/currency accounts share the specification catalog; it is not an account-owned catalog. See [scope and practice instructions](phase-2b-4a.md) and the [review-required CFD persistence plan](phase-2b-4b-plan.md).

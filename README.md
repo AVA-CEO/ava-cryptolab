@@ -6,6 +6,8 @@ A cryptocurrency research, trading journal and education platform built incremen
 
 ## Current milestone: Phase 2B.4A — practice accounts and instrument specifications
 
+**2B.4A is accepted and closed (2026-10-17): 8/8 user-reported manual acceptance scenarios passed.** These are the owner's observations, separate from automated results. Read the [acceptance report](docs/phase-2b-4a-acceptance.md). Next is [2B.4B persistence design review](docs/phase-2b-4b-design-review.md) only; implementation and migration 0004 are not authorized.
+
 The new [Accounts workspace guide](docs/phase-2b-4a.md) explains isolated account creation, explicit currencies and immutable specification review. Start its temporary API and separate frontend to test at `http://127.0.0.1:3200/accounts`. Management stays disabled for the normal journal. No new migration or historical account assignment is included. See the [four-step integration roadmap](docs/phase-2b-4-plan.md) and [proposed persistence milestone](docs/phase-2b-4b-plan.md).
 
 Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account management now works in disposable practice mode; CFD journal entry integration and broker synchronization remain future milestones.

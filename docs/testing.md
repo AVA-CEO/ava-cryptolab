@@ -2,6 +2,8 @@
 
 ## Phase 2B.4A practice account checks
 
+The owner formally accepted 2B.4A on **2026-10-17**, reporting **8/8 manual scenarios passed** in the isolated Accounts workspace. See the [manual acceptance report](phase-2b-4a-acceptance.md). These results are not additional automated cases and were not independently performed by Codex. The [2B.4B test matrix](phase-2b-4b-design-review.md#12-test-plan-and-approval-checkpoints) is a future plan, not an executed test suite.
+
 The [milestone report](phase-2b-4a.md) covers 39 new synthetic backend cases plus all 439 prior regressions: **478 backend tests pass**. Tests cover account identities, duplicates, currency independence, compatible shared catalogs, incompatible scope rejection, immutable versions, exact precision, missing evidence, safe error responses and disabled/non-loopback/database-target guards. Databases are disposable; no normal journal or backup is a test target.
 
 Run `npm run test:e2e` for the desktop/mobile account flows and existing journal regressions. The browser API runner enables management only for its temporary database. Production builds and browser checks use `.next-e2e` sequentially; the separate manual practice commands in the milestone guide use `.next-practice`. No additional database migration or dependency is required.

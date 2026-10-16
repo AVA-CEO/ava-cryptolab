@@ -2,6 +2,8 @@
 
 Status: **awaiting owner review and implementation authorization**. No migration is included in 2B.4A.
 
+Update 2026-10-17: the owner accepted 2B.4A on [eight user-reported manual passes](phase-2b-4a-acceptance.md) and explicitly authorized **design review only** for 2B.4B. The detailed proposal is now in [CFD persistence design review](phase-2b-4b-design-review.md), covering ten new CFD-only tables, a proposed additive 0004, revision/correction policy, exact Decimal storage, retries, concurrency, reproducibility and disposable rehearsal gates. Existing 0003 account/snapshot tables are reused but cannot store the CFD ledger by themselves. No implementation or migration is authorized by either document.
+
 ## What we will build
 
 Store reviewed CFD trades separately from legacy crypto rows. A trade links to an existing account ID and immutable specification snapshot ID, with exact entry/exits, original stop/risk inputs, signed costs, dated conversion evidence and optional broker reconciliation values. Python loads trusted identities by ID and calls the tested partial-CFD engine; browser calculations are never the authority.
