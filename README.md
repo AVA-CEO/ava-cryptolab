@@ -4,17 +4,17 @@
 
 A cryptocurrency research, trading journal and education platform built incrementally as a full-stack engineering project. It helps explain trading decisions and market mechanics without profit promises or exchange execution.
 
-## Current milestone: Phase 2B.3A — Validated CFD calculation inputs
+## Current milestone: Phase 2B.3B — Separate linear forex/CFD calculator
 
 Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account-management screens, CFD entry/calculations and broker synchronization remain future milestones.
 
-The separate [CFD input contracts](docs/phase-2b-3a.md) now validate exact Decimal lots, immutable specification inputs, entry/exit fills, signed costs and explicit currency-conversion evidence. A standalone command validates the labelled synthetic example without connecting to a database or broker:
+The separate [CFD input contracts](docs/phase-2b-3a.md) validate exact Decimal lots, immutable specification inputs, entry/exit fills, signed costs and explicit currency-conversion evidence. The [linear CFD calculator](docs/phase-2b-3b.md) now calculates fully closed, single-exit positions with native/reporting currency results and an explicit rounding policy. Run a labelled synthetic example without connecting to a database or broker:
 
 ```powershell
-.\.venv\Scripts\python.exe services/api/scripts/validate_cfd_input.py services/api/tests/fixtures/cfd-input.synthetic.json
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd.py services/api/tests/fixtures/cfd-calculation.synthetic.json
 ```
 
-This is a working Python validation tool. The CFD calculator, journal form/API integration and broker reconciliation are not implemented. The existing crypto journal and purple interface are retained.
+The standalone validator remains available. Supported modes are explicitly defined forex, linear CFD and index CFD contracts; tick-based modes and partial closures return unavailable. CFD journal form/API integration, broker reconciliation and broker connections are not implemented. Existing crypto calculations and the purple interface are retained.
 
 The working journal currently supports:
 
@@ -100,7 +100,7 @@ docs/             Architecture, setup, tests and deployment notes
 
 1. **Foundation** — completed.
 2. **Journal** — accepted: CRUD, executions, risk calculations, performance charts, CSV and Trading IQ foundations.
-   **Phase 2B** — account/instrument contracts, safe persistence and validated CFD inputs; CFD calculations, account management, reconciliation and combined analytics follow before Phase 3.
+   **Phase 2B** — account/instrument contracts, safe persistence, validated CFD inputs and a separate single-close calculator; partial closures, account management, reconciliation and combined analytics follow before Phase 3.
 3. **Market intelligence** — provider adapters, caching, screener and watchlists.
 4. **Academy** — curated learning paths, lessons and server-validated quiz attempts.
 5. **Gamification** — achievements, streaks and minigames.

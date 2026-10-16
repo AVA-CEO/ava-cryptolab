@@ -1,6 +1,6 @@
 # Phase 2B.3 proposal — Forex and CFD calculation engines
 
-Status: **detailed plan ready; no implementation in this checkpoint**. GitHub validation passed and the normal SQLite migration was explicitly approved, applied and [verified](migration-0003-verification.md). The owner moved calculation engines ahead of account-management screens. This document presents the design before coding; it does not implement a calculator, broker connection, CFD-entry screen or new schema migration.
+Status: **2B.3A inputs and 2B.3B single-close linear calculator implemented with owner authorization**. See the [2B.3B report](phase-2b-3b.md). The [2B.3C partial-closure/reconciliation proposal](phase-2b-3c-plan.md) awaits separate implementation approval. The normal SQLite migration was previously approved and [verified](migration-0003-verification.md); calculation milestones make no database changes. Broker connections, CFD-entry screens and new migrations remain outside these milestones.
 
 ## Architecture and purpose
 
@@ -91,7 +91,7 @@ No new database migration or TypeScript form change is proposed for the initial 
 ## Small implementation steps
 
 1. **2B.3A — validated calculation inputs:** implemented as [a separate validation boundary](phase-2b-3a.md): Decimal lots, executions, frozen snapshot inputs, signed costs and explicit currency observations. No result calculator or database writes. Result schemas belong with 2B.3B.
-2. **2B.3B — forex/linear CFD math:** gross/net PnL, pips/ticks and initial-risk/R calculations, with dedicated USDJPY/cross-pair and metals tests. Add explicit product dispatch; preserve `app/analytics/trades.py` and its crypto semantics.
+2. **2B.3B — forex/linear CFD math:** implemented for fully closed single-exit positions: gross/net PnL, pips/ticks and initial-risk/R calculations, dedicated USDJPY/cross-pair and metals tests, explicit rounding and guarded product dispatch. `app/analytics/trades.py` and its crypto semantics remain unchanged.
 3. **2B.3C — partial closures and verification:** remaining lots, cost recognition, explicit conversions, broker-PnL comparison fields and reproducible test examples. Keep broker-reported and calculated outcomes separate.
 
 Likely test files are `services/api/tests/test_cfd_calculations.py` and a fixture module clearly labelled synthetic. Any permissible real-statement reconciliation fixture needs separate redaction/consent checks; its results must not be claimed before data is available. No particular Bybit contract size, swap schedule or currency peg will be hardcoded as universal truth.
@@ -108,6 +108,6 @@ Likely test files are `services/api/tests/test_cfd_calculations.py` and a fixtur
 
 Before coding, walk through the example together, identify units on every multiplication and explain each field. After coding, provide exact test commands and an in-memory example; report actual results and unresolved limits. The milestone teaches separation of financial models, Decimal precision, pure functions, product dispatch and testable accounting policies.
 
-## 2B.3B review gate
+## 2B.3C review gate
 
-2B.3A is complete; **2B.3B has not been implemented and needs owner authorization**. The detailed [next-step proposal](phase-2b-3a.md#proposed-2b3b-for-review) narrows the first calculator to explicit linear modes and fully closed, single-exit examples. Partial-closure accounting and broker-reported reconciliation remain 2B.3C work. Tick metadata validation does not imply that historical tick-mode valuation is ready.
+The owner separately authorized 2B.3B, which is complete. **2B.3C has not been implemented and needs owner authorization.** Its [review plan](phase-2b-3c-plan.md) covers partial-closure accounting and broker-reported comparison evidence. Tick metadata validation does not imply that historical tick-mode valuation is ready; that remains a separate evidence/design gate.

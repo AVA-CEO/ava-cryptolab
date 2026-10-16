@@ -1,0 +1,133 @@
+{
+  "schema_version": "cfd-calculation-v1",
+  "trade": {
+    "schema_version": "cfd-input-v1",
+    "account": {
+      "account_id": "synthetic-account",
+      "name": "Synthetic teaching account",
+      "broker": "Synthetic broker",
+      "platform": "mt5",
+      "server": "Synthetic server",
+      "reporting_currency": "USD",
+      "settlement_currency": "USD"
+    },
+    "snapshot": {
+      "snapshot_id": "synthetic-usdjpy-snapshot",
+      "content_sha256": "c45d1d774ec2de4a1b103465478a13862b72268f58b70742edbaebd1309c6b80",
+      "specification": {
+        "instrument_id": "synthetic-usdjpy",
+        "symbol": "USDJPY",
+        "broker": "Synthetic broker",
+        "venue": "Synthetic server",
+        "product": "cfd",
+        "market_category": "forex",
+        "calculation_mode": "forex",
+        "quantity_unit": "lots",
+        "profit_currency": "JPY",
+        "settlement_currency": "USD",
+        "tick_size": "0.001",
+        "volume_min": "0.01",
+        "volume_step": "0.01",
+        "volume_max": "100",
+        "contract_size": "100000",
+        "pip_size": "0.01",
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching fixture; not a Bybit specification",
+          "effective_at": "2025-01-01T00:00:00Z",
+          "captured_at": "2025-01-02T00:00:00Z"
+        }
+      }
+    },
+    "direction": "buy",
+    "entry": {
+      "execution_id": "synthetic-entry",
+      "executed_at": "2025-01-03T00:00:00Z",
+      "price": "150.000",
+      "lots": "0.10"
+    },
+    "exits": [
+      {
+        "execution_id": "synthetic-exit-1",
+        "executed_at": "2025-01-04T00:00:00Z",
+        "price": "150.100",
+        "lots": "0.10",
+        "profit_conversion_id": "synthetic-exit-fx"
+      }
+    ],
+    "original_stop": "149.900",
+    "planned_take_profit": "150.300",
+    "adjustments": [
+      {
+        "adjustment_id": "synthetic-commission",
+        "kind": "commission",
+        "amount": "-3",
+        "currency": "USD",
+        "occurred_at": "2025-01-03T00:00:00Z",
+        "execution_id": "synthetic-entry",
+        "description": "Synthetic incurred commission debit",
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching example"
+        }
+      },
+      {
+        "adjustment_id": "synthetic-swap",
+        "kind": "swap",
+        "amount": "-1",
+        "currency": "USD",
+        "occurred_at": "2025-01-04T00:00:00Z",
+        "description": "Synthetic incurred swap debit",
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching example"
+        }
+      }
+    ],
+    "reporting_policy": "explicit_rates",
+    "conversions": [
+      {
+        "conversion_id": "synthetic-exit-fx",
+        "from_currency": "JPY",
+        "to_currency": "USD",
+        "rate": "0.0065",
+        "observed_at": "2025-01-04T00:00:00Z",
+        "applies_at": "2025-01-04T00:00:00Z",
+        "max_age_seconds": 0,
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching rate; not market data"
+        }
+      },
+      {
+        "conversion_id": "synthetic-risk-fx",
+        "from_currency": "JPY",
+        "to_currency": "USD",
+        "rate": "0.0065",
+        "observed_at": "2025-01-03T00:00:00Z",
+        "applies_at": "2025-01-03T00:00:00Z",
+        "max_age_seconds": 0,
+        "source": {
+          "kind": "manual",
+          "reference": "Synthetic teaching rate; not market data"
+        }
+      }
+    ],
+    "risk_conversion_id": "synthetic-risk-fx"
+  },
+  "rounding": {
+    "currencies": [
+      {
+        "currency": "USD",
+        "decimal_places": 2
+      },
+      {
+        "currency": "JPY",
+        "decimal_places": 0
+      }
+    ],
+    "rounding": "ROUND_HALF_EVEN",
+    "ratio_places": 6,
+    "movement_places": 6
+  }
+}

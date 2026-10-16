@@ -1,5 +1,19 @@
 # Testing
 
+## Phase 2B.3B calculation checks
+
+The [calculator report](phase-2b-3b.md) records **357 backend passes**, including the previous 266 and 91 new cases. Synthetic hand-worked expectations cover EURUSD/GBPUSD longs and shorts, JPY-profit/USD-reporting cases, supplied gold/silver contract sizes, signed costs, original risk and R, unavailable inputs, precision and rounding. Independent `Fraction` cash ledgers verify exact results, including extreme input/FX products. These are synthetic calculation checks, not real broker reconciliation.
+
+Run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd.py services/api/tests/fixtures/cfd-calculation.synthetic.json
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd.py services/api/tests/fixtures/cfd-jpy-calculation.synthetic.json --json
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q
+```
+
+The calculator command reads a request file only. It never opens the journal database, applies migrations or calls a broker. No new environment variables or dependencies are required. Keep the existing lint/format/build/browser checks below; normal data and backups are not test targets. Production build and browser checks use the isolated `.next-e2e` directory sequentially.
+
 ## Phase 2B.3A CFD validation
 
 The [milestone report](phase-2b-3a.md) records the actual results. The backend suite now has **266 passing cases**: the existing 99 plus 167 new validation/precision/compatibility cases. New CFD tests use synthetic fixtures and disposable SQLite sessions; they do not test a CFD profit calculator or reconcile broker statements. Test modules retain the project's existing flat import convention.

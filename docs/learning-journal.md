@@ -146,3 +146,49 @@ In VS Code, open `private/exercises/cfd-input.json` and change only the entry's 
 ```
 
 Expect `Exit lots cannot exceed original entry lots.` The process exits with code 1: a deliberate validation failure, not a broken database. Restore entry lots to `"0.10"` and run again for success (exit code 0). You learned how one form field can invalidate a relationship with other fields. The command does not open the journal database or calculate a profit, and `private/` is ignored by Git.
+
+## 2B.3B — following the money and keeping the units
+
+We now have a separate calculator for explicitly supported linear forex/CFD contracts, one entry and one fully closing exit. Think of a receipt: first count what was bought, then compare sale proceeds to purchase cost, then add the recorded fees or credits. A different contract may need a different recipe; a tick-based instrument is not sent into the linear recipe automatically.
+
+### Lots are packages; contract size is the package label
+
+In the synthetic EURUSD example, one lot represents 100,000 units because the supplied snapshot says so. At 0.10 lots, the position represents 10,000 units. Moving from 1.10000 to 1.10100 gives a difference of 0.00100 USD per unit. Therefore the buy earns 10 USD gross. The original stop at 1.09900 is also 0.00100 away, so original planned price risk is 10 USD. This is a stop-price estimate, not a guarantee or broker margin requirement.
+
+Commission of −3 USD and swap of −1 USD are debits. Gross 10 plus costs −4 gives net 6 USD. Divide net 6 by original risk 10 to get 0.6R. R is a ratio: like saying a journey used six tenths of a tank, it compares two quantities on the same basis. It is not a currency or a promise of future performance. A missing original stop produces an unavailable risk/R result rather than zero risk.
+
+### Decimal and rounding do different jobs
+
+Decimal keeps the base-ten inputs exact. The calculator uses a fresh 160-digit working context, independent of the caller's Decimal settings. That is enough for exact cash products and sums within our input bounds. A repeating division such as 2.5 ÷ 6.5 still needs finite precision. Display rounding then uses a separately supplied rule; it never replaces the raw amount used for R or net accounting.
+
+The policy must name decimal places for every relevant currency. We do not assume all currencies have two decimals. HALF_EVEN rounds a tie toward an even final digit: 2.345 to two decimals becomes 2.34. HALF_UP gives 2.35. Two separately rounded fees need not add to the correctly rounded total, so we sum unrounded fees first. Exact raw values and the chosen policy remain visible in JSON output.
+
+### JPY profit is still JPY before conversion
+
+The synthetic USDJPY move from 150.000 to 150.100 produces 1,000 JPY gross using the declared lots and contract. A supplied JPY→USD rate of 0.0065 converts it to 6.50 USD; USD costs of −4 then leave 2.50 USD. The native JPY gross remains visible. Native net is unavailable here because those USD costs have no approved JPY valuation policy. We do not silently reverse the rate.
+
+Entry-time risk conversion and exit-time profit conversion are separate observations. If those rates differ, native R and reporting-currency R can differ. That is why we show their currencies and preserve each observation's source and timestamp. USD, USDT and USDX are separate labels, not interchangeable money.
+
+### Pure functions and independent tests
+
+A pure function is like a pocket calculator: it uses the supplied numbers and returns an answer without opening a database or calling a broker. The engine does not save a trade. Its tests compare hand-worked answers and independent rational-number cash ledgers. A rational number is an exact fraction, so it gives us a second arithmetic method rather than trusting the same Decimal implementation to generate expected answers.
+
+Leverage is not multiplied into these profits. Actual fill prices already reflect bid/ask execution; subtracting a guessed spread again would count it twice. No CFD margin estimate is produced because broker margin rules need their own inputs and review. Existing crypto leverage/margin behavior remains unchanged and is regression-tested.
+
+### Practical exercise — turn a synthetic win into a loss
+
+From the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd.py services/api/tests/fixtures/cfd-calculation.synthetic.json
+New-Item -ItemType Directory -Force private/exercises | Out-Null
+Copy-Item services/api/tests/fixtures/cfd-calculation.synthetic.json private/exercises/cfd-calculation.json
+```
+
+Open the private copy in VS Code. Under `trade.exits`, change the single exit's `price` from `"1.10100"` to `"1.09900"`. Leave the entry, original stop and costs unchanged. Then run:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd.py private/exercises/cfd-calculation.json
+```
+
+Expect −10 USD gross, −14 USD net, 10 USD original planned risk and −1.4R. Costs can make a stop-price loss larger than the original price-risk estimate. Restore the exit price for the original 6 USD net and 0.6R. Add `--json` to inspect the raw amounts and policy. You have learned units, signed cash flows, original-risk denominators and the difference between calculation and display rounding. This exercise does not touch your normal journal or backups.

@@ -1,5 +1,11 @@
 # Architecture
 
+## Phase 2B.3B independent calculation engine
+
+The [single-close CFD calculator](phase-2b-3b.md) accepts a validated trade plus explicit per-currency rounding policy. `analytics/cfd.py` performs pure Decimal accounting for an allowlist of linear calculation modes; `schemas/cfd_results.py` separates raw money, rounded display values and unavailable reasons. Native profit remains visible before explicit cash-flow-time reporting conversions. A fresh 160-digit Decimal context keeps cash operations exact over the bounded input domain; ratios use that finite precision. No rate is fetched or inferred.
+
+`analytics/products.py` is an opt-in dispatcher. CFD requests use only the CFD engine. Matching legacy crypto `Trade` objects use the unchanged legacy calculator and response structure through a lazy import; existing journal routes are not rerouted. Unsupported products/modes and open/partial/multiple-exit CFD positions return unavailable. The standalone script imports no ORM, database session, application entry point or broker SDK. Result models are not new database tables.
+
 ## Phase 2B.3A financial input boundary
 
 The [CFD validation milestone](phase-2b-3a.md) adds pure Pydantic contracts under `app/schemas/`. Exact financial types, timezone-aware evidence, frozen specification inputs and typed execution/cost/conversion references are separate from the existing crypto `TradeInput` and calculator. These modules import no database session, application entry point, HTTP client or broker SDK. The standalone validation script reads JSON only. No API route, database schema or historical account association changes in this milestone.
