@@ -6,7 +6,7 @@ A cryptocurrency research, trading journal and education platform built incremen
 
 ## Current milestone: Phase 2B.2 — Multi-asset persistence rehearsals
 
-Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal journal database has not been migrated; its migration requires separate owner approval.** Use the [safe rehearsal command and report](docs/phase-2b-2.md), rather than running an upgrade against an existing personal database. Account-management screens, CFD entry/calculations and broker synchronization remain future milestones.
+Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account-management screens, CFD entry/calculations and broker synchronization remain future milestones.
 
 The working journal currently supports:
 
@@ -48,7 +48,7 @@ Terminal 1 — backend:
 
 ```powershell
 cd services/api
-# Fresh empty development database only; existing normal journal needs approval first.
+# Fresh empty development database; the existing normal journal is already at 0003.
 ..\..\.venv\Scripts\python.exe -m alembic upgrade head
 ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```

@@ -1,6 +1,6 @@
 # Phase 2B.2 — Additive persistence and migration rehearsals
 
-Status: code and disposable SQLite rehearsals completed. **Normal journal migration is not authorized and has not been run.** Remote pushes and deployment also remain unapproved. This milestone adds persistence foundations, not account-management screens, CFD entry/calculators, statement import or broker connections.
+Status: code and disposable SQLite rehearsals completed. The owner subsequently approved the code push and normal SQLite migration; revision `0003` is now applied with [preservation verification](migration-0003-verification.md). Further local documentation commits remain unpushed. Deployment is not authorized. This milestone adds persistence foundations, not account-management screens, CFD entry/calculators, statement import or broker connections.
 
 ## Database design in plain language
 
@@ -81,7 +81,7 @@ From the repository root, safely repeat the rehearsal:
 
 Expected summary: four trades, three exits, preserved legacy state, zero rows in all five extension tables, metadata check passed and safe empty-extension downgrade/re-upgrade passed. Synthetic numbers are teaching fixtures, not prices or broker statements.
 
-**Do not run `alembic upgrade head` against the normal journal yet.** Its migration requires explicit owner approval after reviewing this report. Before a later approved migration: stop writers, verify the resolved database/upload paths, create and validate a private backup of the real database and screenshots, apply the migration transactionally, and compare real IDs/counts/relationships and financial results without exposing records. No real backup, stop or migration is performed by this milestone.
+The original rehearsal milestone held the normal journal migration pending explicit owner approval. That approval was subsequently provided: the normal database is now at `0003`, with [backup and migration verification](migration-0003-verification.md). Do not rerun an upgrade merely to inspect its revision. Before future approved migrations: stop writers, verify resolved database/upload paths, validate private backups, apply the change transactionally and compare IDs/counts/relationships and financial results without exposing records. The initial implementation rehearsals used only synthetic databases; the later real-data operation is documented separately.
 
 ## Validation and platform limits
 
@@ -89,7 +89,7 @@ The final backend run passed **99 tests: the existing 68 plus 31 persistence/mig
 
 The final full Playwright run passed **10 desktop/mobile tests** using its original configuration and a disposable database. The first run passed nine tests and reported one mobile-context teardown failure because a trace artifact was missing (`ENOENT`). Inspection showed no application assertion failure in that report; the isolated mobile flow passed with tracing retained and a fresh temporary artifact directory, followed by all ten passing with the original configuration. The exact missing-file cause was not established. Tracing and application tests were not disabled or weakened; the initial failure is retained here as a verification limitation. Browser output also contains existing color-environment and intentional reduced-motion notices.
 
-The normal local SQLite database's SHA-256 fingerprint matched before and after the milestone checks. No real database migration, backup or screenshot changes were performed. The existing journal UI and calculations remain unchanged.
+During the original disposable-rehearsal milestone, the normal SQLite database's SHA-256 fingerprint matched before and after checks, and no real-data migration/backup was performed. The separately approved normal migration is recorded in its own report. The existing journal UI and calculations remain unchanged.
 
 SQLite rehearsals are runtime-tested. PostgreSQL migration SQL was rendered and checked offline for tables, constraints and trigger DDL; **no PostgreSQL server was available and PostgreSQL runtime behavior is not verified**. PostgreSQL runtime migration, constraint/trigger and backup-restore rehearsals remain a gate before PostgreSQL deployment. This is not a production multiuser approval.
 

@@ -1,6 +1,6 @@
 # Phase 2B.3 proposal — Forex and CFD calculation engines
 
-Status: planning only. The owner moved calculation engines ahead of account-management screens. GitHub validation and final approval/application/verification of the normal database migration come first. No calculator, broker connection, CFD-entry screen or schema change is implemented by this plan.
+Status: **detailed plan ready; no implementation in this checkpoint**. GitHub validation passed and the normal SQLite migration was explicitly approved, applied and [verified](migration-0003-verification.md). The owner moved calculation engines ahead of account-management screens. This document presents the design before coding; it does not implement a calculator, broker connection, CFD-entry screen or new schema migration.
 
 ## Architecture and purpose
 
@@ -41,6 +41,35 @@ Assume a hypothetical EURUSD contract with 100,000 units per lot, 0.1 lots, buy 
 
 Changing leverage alone must not change those profit figures. Changing contract size or lots does change them.
 
+## USDJPY and other JPY pairs
+
+For the forex linear mode, a USDJPY or EURJPY price difference produces JPY profit when JPY is the declared profit currency. Never label that result USD merely because the account reports USD or the symbol begins with USD. Pip size must come from the snapshot; do not derive it from the number of displayed price decimals.
+
+Synthetic example only: a USDJPY buy with entry 150.00, exit 150.10, 0.1 lots, 100,000 base units per lot and a declared 0.01 pip size has gross PnL `0.10 × 0.1 × 100000 = 1000 JPY`, and moves 10 pips. Its pip value for this position is 100 JPY per pip. A separately supplied hypothetical JPY-to-USD rate of 0.0065 would report 6.50 USD before costs; without an explicit applicable rate, the engine reports 1000 JPY and leaves USD output unavailable. These are arithmetic teaching inputs, not current exchange rates or broker specifications.
+
+The same separation applies to EURJPY/GBPJPY and accounts reporting another currency. Test both rate direction and currency match; do not silently invert an unrelated quote or assume the broker used the trade's exit price for conversion. Preserve the broker's actual conversion observation when available.
+
+## XAUUSD and XAGUSD specifications
+
+Gold and silver use the recorded broker contract size, units-per-lot description, tick size, volume increments, calculation mode and profit currency. Do not bake one gold/silver lot size into a symbol lookup. Preserve snapshot provenance/effective time; a new specification must not change old calculations. Verify the actual broker/server specification before labelling any template broker-verified.
+
+Two synthetic linear examples test unit handling:
+
+| Instrument example | Declared contract and position          | Price movement | Gross PnL |
+| ------------------ | --------------------------------------- | -------------- | --------- |
+| XAUUSD             | 100 underlying units per lot; 0.1 lots  | 2000 to 2005   | 50 USD    |
+| XAGUSD             | 5000 underlying units per lot; 0.1 lots | 25.00 to 25.02 | 10 USD    |
+
+These are fixtures, not Bybit contract defaults. For a linear mode, changing the declared tick size changes the tick count/value representation, not the already-defined price-difference result. A metal pip convention is optional and explicit; display ticks or currency instead of inventing a pip size. Test declared profit/loss tick values separately where a tick-based calculation mode actually requires them.
+
+## Partial closure and cost recognition
+
+Start with one entry and multiple exits, reusing the existing journal's conceptual model. Reject negative lots, non-finite numbers, out-of-step volumes and closes greater than the remaining position. Do not add automatic scale-ins, order execution or live pricing.
+
+For the synthetic EURUSD entry above, close 0.04 lots at 1.10100 and the remaining 0.06 at 1.10200. Gross amounts are 4 USD and 12 USD, totaling 16 USD. If the total recorded commission debit is 3 USD and swap debit is 1 USD, final net is 12 USD. With the original 10 USD price-risk budget, the fully closed result is 1.2R. The denominator is the original position risk, not a shrinking risk amount that makes later results look larger.
+
+Specify cost recognition by actual incurred timestamp: entry commissions and other already-incurred adjustments are recognized once; exit costs are recognized with their execution; future/unreported swaps are not estimated as actual charges. Per-exit cost views require a disclosed allocation and must sum to the trade's recorded total. Keep partially closed results distinguishable from fully closed statistics. Define a consistent reporting-currency policy for original risk and realized cash flows; preserve their native amounts and conversion provenance.
+
 ## Currency, costs and partial exits
 
 Profit, reporting and settlement currencies are distinct. Store native amounts. Convert each realized cash flow with an explicit rate, direction, source, timestamp and rounding policy when reporting currency differs. Missing conversions produce unavailable reporting totals, not zero or assumed USD/USDT/USDx parity. Do not revalue historical results using today's rates.
@@ -58,6 +87,14 @@ Preserve broker-reported gross/net PnL separately from calculated figures, with 
 - This documentation and `docs/learning-journal.md`.
 
 No new database migration or TypeScript form change is proposed for the initial engine step. Later form/API integration will receive its own file plan and acceptance checks before coding.
+
+## Small implementation steps
+
+1. **2B.3A — calculation inputs and outputs:** validated Decimal lots, executions, contract snapshots, signed costs and currency observations. Explain unit labels and missing-data results; no database writes.
+2. **2B.3B — forex/linear CFD math:** gross/net PnL, pips/ticks and initial-risk/R calculations, with dedicated USDJPY/cross-pair and metals tests. Add explicit product dispatch; preserve `app/analytics/trades.py` and its crypto semantics.
+3. **2B.3C — partial closures and verification:** remaining lots, cost recognition, explicit conversions, broker-PnL comparison fields and reproducible test examples. Keep broker-reported and calculated outcomes separate.
+
+Likely test files are `services/api/tests/test_cfd_calculations.py` and a fixture module clearly labelled synthetic. Any permissible real-statement reconciliation fixture needs separate redaction/consent checks; its results must not be claimed before data is available. No particular Bybit contract size, swap schedule or currency peg will be hardcoded as universal truth.
 
 ## Test and teaching strategy
 

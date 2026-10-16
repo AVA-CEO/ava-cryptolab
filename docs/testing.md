@@ -2,7 +2,7 @@
 
 ## Phase 2B migration rehearsals
 
-Use `.\.venv\Scripts\python.exe services/api/scripts/rehearse_multi_asset.py` from the root. It creates and backs up a synthetic legacy database and screenshot, migrates only that disposable database, compares old records/calculations, checks Alembic metadata and rehearses safe reversal. The temporary files are removed on exit. Full tests also verify backup restoration, injected-failure rollback, immutable snapshot guards and relationship constraints. See [2B.2](phase-2b-2.md) for exact scope and PostgreSQL limits. Do not migrate the normal journal until separately approved.
+Use `.\.venv\Scripts\python.exe services/api/scripts/rehearse_multi_asset.py` from the root. It creates and backs up a synthetic legacy database and screenshot, migrates only that disposable database, compares old records/calculations, checks Alembic metadata and rehearses safe reversal. The temporary files are removed on exit. Full tests also verify backup restoration, injected-failure rollback, immutable snapshot guards and relationship constraints. See [2B.2](phase-2b-2.md) for exact scope and PostgreSQL limits. The separately approved [normal journal migration](migration-0003-verification.md) is complete; it is not an automated test target.
 
 ## Phase 2 coverage
 

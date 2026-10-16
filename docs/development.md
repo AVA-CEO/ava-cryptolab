@@ -2,7 +2,7 @@
 
 Use the root README commands. Backend commands must run in `services/api`, ensuring SQLite and Alembic use the same location. On macOS/Linux substitute `.venv/bin/python` for `.venv\Scripts\python.exe`.
 
-Phase 2B.2 safety gate: revision `0003` is rehearsed on disposable SQLite databases only. Do not run the ordinary upgrade command against the existing normal journal before owner approval. Use the [safe rehearsal command](phase-2b-2.md) instead; it does not read `DATABASE_URL` for its migration target. Existing journal use at revision `0002` remains supported.
+The normal SQLite journal is at `0003` following owner approval and [verification](migration-0003-verification.md). Inspection does not require another upgrade. Future normal-database schema changes require a reviewed backup and explicit authorization. Use the [safe rehearsal command](phase-2b-2.md) for migration exercises; it never selects the personal `DATABASE_URL` as its target. Existing journal compatibility with `0002` remains covered by tests.
 
 ## Environment
 

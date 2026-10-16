@@ -16,7 +16,7 @@ Before every coding milestone, explain what is being built, why it matters, how 
 
 ## 2B.2 — Safe additive persistence and migration rehearsal
 
-The [implementation and rehearsal report](phase-2b-2.md) records the additive schema and checks. The normal journal migration is pending separate owner approval; later milestones are not claimed complete.
+The [implementation and rehearsal report](phase-2b-2.md) records the additive schema and checks. The normal SQLite migration was subsequently approved, applied and [verified](migration-0003-verification.md). Later milestones are not claimed complete.
 
 - Build: persist accounts, instruments/specification snapshots and product-specific details, preserving legacy trade IDs, exits, screenshots and relationships. Add explicit account associations without guessing unknown historical ownership.
 - Why/how: an Alembic migration is a versioned set of database changes. Rehearse it on an isolated backup, compare before/after records and document recovery before applying it to personal data.
@@ -26,7 +26,7 @@ The [implementation and rehearsal report](phase-2b-2.md) records the additive sc
 
 ## 2B.3 — Forex and CFD calculation engines
 
-Priority updated at the owner's request after 2B.2: calculation engines now precede account-management screens. See the [detailed architecture, formulas and tests](phase-2b-3-plan.md). This remains a plan until the normal migration gate is resolved; no CFD calculation code is part of the backup checkpoint.
+Priority updated at the owner's request after 2B.2: calculation engines now precede account-management screens. See the [detailed architecture, formulas and tests](phase-2b-3-plan.md). The normal migration gate is resolved; this checkpoint presents the detailed calculation plan without implementing it.
 
 - Build: pure, independent Python forex/CFD calculators and validated execution/cost inputs, using historical instrument snapshots and explicit currencies. No new CFD-entry UI or broker connection in this first calculation step.
 - Why/how: lots and contract specifications determine a CFD's calculation mode. An explicit product dispatcher prevents crypto quantity math being applied to CFDs. Missing rates or specifications produce unavailable output, not invented values.

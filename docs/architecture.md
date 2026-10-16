@@ -2,7 +2,7 @@
 
 ## Phase 2B persistence extension
 
-See the [2B.2 design and rehearsal report](phase-2b-2.md) for the five additive tables, immutable specification snapshots, optional reviewed trade associations and transaction safeguards. Existing journal tables and calculations are retained. The owner's normal database remains on its existing revision pending explicit migration approval; current journal handlers work without the new tables. Multi-account screens, CFD calculations/imports and broker connections are not implemented in this persistence milestone.
+See the [2B.2 design and rehearsal report](phase-2b-2.md) for the five additive tables, immutable specification snapshots, optional reviewed trade associations and transaction safeguards. The normal SQLite database is now at `0003` after explicit approval and [verification](migration-0003-verification.md); existing records/calculations were preserved and new tables remain empty. Current journal handlers also retain tested compatibility with `0002`. Multi-account screens, CFD calculations/imports and broker connections are not implemented in this persistence milestone.
 
 ## Phase 2 extension
 
