@@ -97,3 +97,52 @@ Lesson: a whole database file's fingerprint should change when its schema change
 The owner's updated priority puts forex/CFD calculations before account-management screens. The [2B.3 design](phase-2b-3-plan.md) explains formulas, units, files and tests. A calculation engine can be a pure Python function: given explicit inputs, return an answer without network access or database writes. The normal migration gate is resolved; this checkpoint presents the plan and implements no calculator.
 
 Documentation references: [Python SQLite backup and connection handling](https://docs.python.org/3/library/sqlite3.html), [SQLite backup API](https://sqlite.org/backup.html). The practical exercise is a synthetic rehearsal, not broker-statement reconciliation.
+
+## 2B.3A — checking the ingredients before calculating
+
+A schema is a form with rules. Pydantic is the Python tool checking that form. A field rule checks one box, such as positive lots; a model rule checks several boxes together, such as exit lots not exceeding entry lots. A valid form means the inputs meet our rules, not that a broker has verified them. The [milestone report](phase-2b-3a.md) explains each file and the rules.
+
+Think of cooking: buying the right ingredients and measuring them correctly comes before turning on the oven. We have built the measuring stage. CFD PnL calculation is the next separately reviewed step. Your existing crypto calculator continues working.
+
+### Decimal and units
+
+Python `Decimal("0.10")` keeps that base-ten amount exact. Ordinary binary floating point can introduce tiny representation differences. Converting a float afterward cannot recover precision already lost, so the new financial fields reject floats and booleans. JSON amounts are strings; a later TypeScript form must preserve those strings when sending them to Python. This milestone changes no TypeScript forms.
+
+Lots and contract size are different measuring cups. Lots measure how many contracts; contract size says how much one lot represents. A pip and a tick are also separate declarations. We do not assume a gold contract has the same size as a forex contract or that a JPY pip is the same as a EURUSD pip.
+
+### Currency conversions need a label and a date
+
+An amount without its currency is like a distance without metres or miles. A conversion rate says how many target currency units one source unit buys. The reverse direction is a different input. Each rate has a source, observation time, application time and explicitly chosen allowed age. No automatic inversion or dollar/stablecoin equivalence occurs.
+
+`native_only` means keep currencies separate without converted totals. `explicit_rates` requires suitable evidence for each foreign-currency exit/cost and original stop-risk input. A missing rate is not replaced with 1. For tick-mode metadata, the supplied tick observation's currency remains visible; it is not relabelled as another currency.
+
+### Immutability and fingerprints
+
+A frozen input is a photograph, rather than an editable whiteboard. Nested models are frozen and execution/cost lists become tuples, which cannot be appended to in place. A SHA-256 digest is a content fingerprint: altering the contract size while retaining the old fingerprint causes rejection. It is not a broker signature and does not prove the supplied snapshot ID exists. Existing database guards still protect stored snapshots; this milestone does not write them.
+
+### Tests can teach us about the test setup
+
+The first full run stopped during test discovery because a new package marker conflicted with an existing flat test import. We removed the new marker and used the established convention, without changing the original tests. The final backend run passed 266 cases. A test that cannot be collected has not passed; fixing the setup and rerunning is part of verification.
+
+### Practical exercise — a safe validation error
+
+From the repository root, run the synthetic example:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/validate_cfd_input.py services/api/tests/fixtures/cfd-input.synthetic.json
+```
+
+Expect `Valid CFD inputs (explicit_rates). No PnL calculated or records saved.` Then create a private practice copy:
+
+```powershell
+New-Item -ItemType Directory -Force private/exercises | Out-Null
+Copy-Item services/api/tests/fixtures/cfd-input.synthetic.json private/exercises/cfd-input.json
+```
+
+In VS Code, open `private/exercises/cfd-input.json` and change only the entry's `lots` from `"0.10"` to `"0.03"`. Keep the exit lots unchanged, then run:
+
+```powershell
+.\.venv\Scripts\python.exe services/api/scripts/validate_cfd_input.py private/exercises/cfd-input.json
+```
+
+Expect `Exit lots cannot exceed original entry lots.` The process exits with code 1: a deliberate validation failure, not a broken database. Restore entry lots to `"0.10"` and run again for success (exit code 0). You learned how one form field can invalidate a relationship with other fields. The command does not open the journal database or calculate a profit, and `private/` is ignored by Git.

@@ -1,5 +1,31 @@
 # Testing
 
+## Phase 2B.3A CFD validation
+
+The [milestone report](phase-2b-3a.md) records the actual results. The backend suite now has **266 passing cases**: the existing 99 plus 167 new validation/precision/compatibility cases. New CFD tests use synthetic fixtures and disposable SQLite sessions; they do not test a CFD profit calculator or reconcile broker statements. Test modules retain the project's existing flat import convention.
+
+Run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest services/api/tests -q
+.\.venv\Scripts\python.exe -m ruff check services/api
+.\.venv\Scripts\python.exe -m ruff format --check services/api
+.\.venv\Scripts\python.exe services/api/scripts/validate_cfd_input.py services/api/tests/fixtures/cfd-input.synthetic.json
+```
+
+To lint/check/build while a normal frontend is running, use a separate PowerShell terminal and the existing isolated output directory. Keep browser tests sequential with this build because both use `.next-e2e`:
+
+```powershell
+$env:AVA_E2E = "1"
+$env:API_BASE_URL = "http://127.0.0.1:59999"
+npm run lint
+npm run typecheck
+npm run build
+npm run format:check
+```
+
+The unreachable API address prevents accidental real-journal access during build. Browser-test configuration supplies its own disposable API URL. No dependency changes are required for this milestone.
+
 ## Phase 2B migration rehearsals
 
 Use `.\.venv\Scripts\python.exe services/api/scripts/rehearse_multi_asset.py` from the root. It creates and backs up a synthetic legacy database and screenshot, migrates only that disposable database, compares old records/calculations, checks Alembic metadata and rehearses safe reversal. The temporary files are removed on exit. Full tests also verify backup restoration, injected-failure rollback, immutable snapshot guards and relationship constraints. See [2B.2](phase-2b-2.md) for exact scope and PostgreSQL limits. The separately approved [normal journal migration](migration-0003-verification.md) is complete; it is not an automated test target.

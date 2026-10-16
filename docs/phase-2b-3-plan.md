@@ -90,7 +90,7 @@ No new database migration or TypeScript form change is proposed for the initial 
 
 ## Small implementation steps
 
-1. **2B.3A — calculation inputs and outputs:** validated Decimal lots, executions, contract snapshots, signed costs and currency observations. Explain unit labels and missing-data results; no database writes.
+1. **2B.3A — validated calculation inputs:** implemented as [a separate validation boundary](phase-2b-3a.md): Decimal lots, executions, frozen snapshot inputs, signed costs and explicit currency observations. No result calculator or database writes. Result schemas belong with 2B.3B.
 2. **2B.3B — forex/linear CFD math:** gross/net PnL, pips/ticks and initial-risk/R calculations, with dedicated USDJPY/cross-pair and metals tests. Add explicit product dispatch; preserve `app/analytics/trades.py` and its crypto semantics.
 3. **2B.3C — partial closures and verification:** remaining lots, cost recognition, explicit conversions, broker-PnL comparison fields and reproducible test examples. Keep broker-reported and calculated outcomes separate.
 
@@ -107,3 +107,7 @@ Likely test files are `services/api/tests/test_cfd_calculations.py` and a fixtur
 7. Keep all existing backend tests, especially crypto calculations, passing. Reconcile against permitted sanitized broker samples when supplied; synthetic expected values are not broker evidence.
 
 Before coding, walk through the example together, identify units on every multiplication and explain each field. After coding, provide exact test commands and an in-memory example; report actual results and unresolved limits. The milestone teaches separation of financial models, Decimal precision, pure functions, product dispatch and testable accounting policies.
+
+## 2B.3B review gate
+
+2B.3A is complete; **2B.3B has not been implemented and needs owner authorization**. The detailed [next-step proposal](phase-2b-3a.md#proposed-2b3b-for-review) narrows the first calculator to explicit linear modes and fully closed, single-exit examples. Partial-closure accounting and broker-reported reconciliation remain 2B.3C work. Tick metadata validation does not imply that historical tick-mode valuation is ready.

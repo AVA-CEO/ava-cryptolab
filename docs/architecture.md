@@ -1,5 +1,11 @@
 # Architecture
 
+## Phase 2B.3A financial input boundary
+
+The [CFD validation milestone](phase-2b-3a.md) adds pure Pydantic contracts under `app/schemas/`. Exact financial types, timezone-aware evidence, frozen specification inputs and typed execution/cost/conversion references are separate from the existing crypto `TradeInput` and calculator. These modules import no database session, application entry point, HTTP client or broker SDK. The standalone validation script reads JSON only. No API route, database schema or historical account association changes in this milestone.
+
+The new snapshot wrapper validates the existing `instrument-v1` canonical digest and retains an explicit snapshot ID. The ID must later be bound to its actual stored row by an authorized API/service; a supplied checksum alone cannot authenticate broker facts. Input validation is a separate boundary from persistence and financial calculation.
+
 ## Phase 2B persistence extension
 
 See the [2B.2 design and rehearsal report](phase-2b-2.md) for the five additive tables, immutable specification snapshots, optional reviewed trade associations and transaction safeguards. The normal SQLite database is now at `0003` after explicit approval and [verification](migration-0003-verification.md); existing records/calculations were preserved and new tables remain empty. Current journal handlers also retain tested compatibility with `0002`. Multi-account screens, CFD calculations/imports and broker connections are not implemented in this persistence milestone.
