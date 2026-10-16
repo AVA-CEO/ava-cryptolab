@@ -16,6 +16,8 @@ Before every coding milestone, explain what is being built, why it matters, how 
 
 ## 2B.2 — Safe additive persistence and migration rehearsal
 
+The [implementation and rehearsal report](phase-2b-2.md) records the additive schema and checks. The normal journal migration is pending separate owner approval; later milestones are not claimed complete.
+
 - Build: persist accounts, instruments/specification snapshots and product-specific details, preserving legacy trade IDs, exits, screenshots and relationships. Add explicit account associations without guessing unknown historical ownership.
 - Why/how: an Alembic migration is a versioned set of database changes. Rehearse it on an isolated backup, compare before/after records and document recovery before applying it to personal data.
 - Proposed files: `services/api/app/models/account.py`, `models/trade.py`, new instrument/CFD models, database exports, `services/api/migrations/versions/`, and migration regression tests.

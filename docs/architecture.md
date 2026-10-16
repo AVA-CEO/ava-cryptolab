@@ -1,5 +1,9 @@
 # Architecture
 
+## Phase 2B persistence extension
+
+See the [2B.2 design and rehearsal report](phase-2b-2.md) for the five additive tables, immutable specification snapshots, optional reviewed trade associations and transaction safeguards. Existing journal tables and calculations are retained. The owner's normal database remains on its existing revision pending explicit migration approval; current journal handlers work without the new tables. Multi-account screens, CFD calculations/imports and broker connections are not implemented in this persistence milestone.
+
 ## Phase 2 extension
 
 The journal now has its own route, feature components, client forms, API bridge and backend router. Trades own exit executions via a cascading relationship. Version columns reject stale edits. Pure Decimal services calculate risk and outcomes; a separate evidence engine produces Trading IQ findings. See [the journal specification](trading-journal.md) for calculation policies and [Trading IQ](trading-iq.md) for evidence thresholds.

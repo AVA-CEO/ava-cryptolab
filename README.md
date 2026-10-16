@@ -4,7 +4,11 @@
 
 A cryptocurrency research, trading journal and education platform built incrementally as a full-stack engineering project. It helps explain trading decisions and market mechanics without profit promises or exchange execution.
 
-## Current milestone: Phase 2 — Advanced Trading Journal
+## Current milestone: Phase 2B.2 — Multi-asset persistence rehearsals
+
+Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal journal database has not been migrated; its migration requires separate owner approval.** Use the [safe rehearsal command and report](docs/phase-2b-2.md), rather than running an upgrade against an existing personal database. Account-management screens, CFD entry/calculations and broker synchronization remain future milestones.
+
+The working journal currently supports:
 
 - Persisted trade creation, viewing, editing and confirmed deletion.
 - Spot inventory and linear futures, partial exit executions, initial stops/targets, fees, funding, leverage and margin type.
@@ -44,6 +48,7 @@ Terminal 1 — backend:
 
 ```powershell
 cd services/api
+# Fresh empty development database only; existing normal journal needs approval first.
 ..\..\.venv\Scripts\python.exe -m alembic upgrade head
 ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
@@ -86,7 +91,8 @@ docs/             Architecture, setup, tests and deployment notes
 ```
 
 1. **Foundation** — completed.
-2. **Journal** — current milestone: CRUD, executions, risk calculations, performance charts, CSV and Trading IQ foundations.
+2. **Journal** — accepted: CRUD, executions, risk calculations, performance charts, CSV and Trading IQ foundations.
+   **Phase 2B** — account/instrument contracts and additive persistence rehearsals; account management, CFD calculations, reconciliation and combined analytics follow before Phase 3.
 3. **Market intelligence** — provider adapters, caching, screener and watchlists.
 4. **Academy** — curated learning paths, lessons and server-validated quiz attempts.
 5. **Gamification** — achievements, streaks and minigames.
@@ -96,18 +102,15 @@ Read [architecture](docs/architecture.md), [deployment preparation](docs/deploym
 
 ## Connect to GitHub
 
-Beginner walkthrough: [connect Git to GitHub](docs/github.md). Local commits are already created; no remote is configured or pushed by the agent.
-
-Create an **empty** repository named `ava-cryptolab` in GitHub (no generated README or licence). Then:
+The project is connected to the owner's private `AVA-CEO/ava-cryptolab` repository. Earlier commits were pushed with explicit authorization; new milestone commits stay local until separately approved. Beginner reference: [GitHub guide](docs/github.md).
 
 ```powershell
-git remote add origin https://github.com/YOUR_USERNAME/ava-cryptolab.git
-git branch -M main
-# Only when you explicitly decide to publish the source:
-git push -u origin main
+git status
+git log --oneline -5
+git remote -v
 ```
 
-No remote is configured or pushed by this milestone. Database files, uploads, secrets, environments and build artifacts are ignored.
+This milestone does not push or deploy anything. Database files, uploads, secrets, environments and build artifacts are ignored.
 
 ## Licence
 
