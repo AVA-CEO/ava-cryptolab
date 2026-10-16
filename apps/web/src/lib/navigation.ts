@@ -5,6 +5,7 @@ import {
   FlaskConical,
   GraduationCap,
   Swords,
+  WalletCards,
 } from "lucide-react";
 export const navigation = [
   {
@@ -20,6 +21,13 @@ export const navigation = [
     icon: BookOpen,
     phase: 2,
     description: "Build a clearer picture of your trading decisions.",
+  },
+  {
+    href: "/accounts",
+    label: "Trading Accounts",
+    icon: WalletCards,
+    phase: 2,
+    description: "Practice accounts and documented instrument specifications.",
   },
   {
     href: "/markets",

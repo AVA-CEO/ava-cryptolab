@@ -1,6 +1,6 @@
 # Proposed Milestone 2B.4 — account workflows and CFD journal integration
 
-Status: **proposal for owner review; not implemented or authorized by 2B.3C**. Reuse the existing journal and tested CFD calculators. Preserve legacy records, IDs, screenshots, crypto calculations and the purple interface. Do not automatically assign historical trades to new accounts/instruments.
+Status: **four-step roadmap approved; 2B.4A implementation authorized. 2B.4B–D await their individual implementation reviews.** Reuse the existing journal and tested CFD calculators. Preserve legacy records, IDs, screenshots, crypto calculations and the purple interface. Do not automatically assign historical trades to new accounts/instruments.
 
 ## 2B.4A — accounts and instrument selection
 

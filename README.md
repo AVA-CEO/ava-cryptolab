@@ -4,9 +4,11 @@
 
 A cryptocurrency research, trading journal and education platform built incrementally as a full-stack engineering project. It helps explain trading decisions and market mechanics without profit promises or exchange execution.
 
-## Current milestone: Phase 2B.3C — Partial CFD positions and comparison evidence
+## Current milestone: Phase 2B.4A — practice accounts and instrument specifications
 
-Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account-management screens, CFD entry/calculations and broker synchronization remain future milestones.
+The new [Accounts workspace guide](docs/phase-2b-4a.md) explains isolated account creation, explicit currencies and immutable specification review. Start its temporary API and separate frontend to test at `http://127.0.0.1:3200/accounts`. Management stays disabled for the normal journal. No new migration or historical account assignment is included. See the [four-step integration roadmap](docs/phase-2b-4-plan.md) and [proposed persistence milestone](docs/phase-2b-4b-plan.md).
+
+Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account management now works in disposable practice mode; CFD journal entry integration and broker synchronization remain future milestones.
 
 The separate [CFD input contracts](docs/phase-2b-3a.md), [single-close calculator](docs/phase-2b-3b.md) and [position accounting engine](docs/phase-2b-3c.md) support validated Decimal accounting. The position engine handles open, partial and closed positions, multiple exits, incurred-once costs, fixed original risk and separate synthetic broker-comparison evidence. Run a labelled synthetic example without connecting to a database or broker:
 

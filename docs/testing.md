@@ -1,5 +1,11 @@
 # Testing
 
+## Phase 2B.4A practice account checks
+
+The [milestone report](phase-2b-4a.md) covers 39 new synthetic backend cases plus all 439 prior regressions: **478 backend tests pass**. Tests cover account identities, duplicates, currency independence, compatible shared catalogs, incompatible scope rejection, immutable versions, exact precision, missing evidence, safe error responses and disabled/non-loopback/database-target guards. Databases are disposable; no normal journal or backup is a test target.
+
+Run `npm run test:e2e` for the desktop/mobile account flows and existing journal regressions. The browser API runner enables management only for its temporary database. Production builds and browser checks use `.next-e2e` sequentially; the separate manual practice commands in the milestone guide use `.next-practice`. No additional database migration or dependency is required.
+
 ## Phase 2B.3C position checks
 
 The [position report](phase-2b-3c.md) records **439 backend passes**: previous 357 plus 82 new cases. Synthetic tests cover the owner's 8 + 18 USD example, four incurred costs, open/partial/closed cutoffs, shorts/losses, JPY rates, metals, invalid ledgers, comparison evidence, exact rounding and maximum ledger cardinality. Existing single-close and crypto regressions remain intact; normal journal data and backups are never test targets.

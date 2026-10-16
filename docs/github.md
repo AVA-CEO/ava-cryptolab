@@ -32,6 +32,6 @@ When you decide to upload the code, the command is:
 git push -u origin main
 ```
 
-No push, repository creation or public publication has been performed by the agent. The agent must obtain explicit authorization before doing those actions. You can run the push command yourself when ready. GitHub may prompt you to sign in using its credential manager; do not paste access tokens into source files or chat.
+The existing repository is `AVA-CEO/ava-cryptolab` and remains private. Previously authorized commits have been pushed, including `d4ffab4`; its [Actions run](https://github.com/AVA-CEO/ava-cryptolab/actions/runs/38885471028) passed both `api` and `web` jobs. New milestone commits remain local until separately authorized. No deployment or visibility change is included. GitHub may prompt you to sign in using its credential manager; do not paste access tokens into source files or chat.
 
 Ignored data includes `.env` files, local SQLite databases, environments, build output, uploads, logs, CSV trade exports and designated private/credential folders. `.env.example` is intentionally tracked and contains no secrets. Check `git status` before every commit; ignore rules cannot identify every possible private filename automatically.

@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./ava.db"
     app_env: str = "local"
     upload_dir: str = "./uploads"
+    account_management_enabled: bool = False
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 

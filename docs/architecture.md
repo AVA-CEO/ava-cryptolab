@@ -1,5 +1,11 @@
 # Architecture
 
+## Phase 2B.4A practice account boundary
+
+The `/accounts` React workspace talks through a local Next.js management bridge to a separate FastAPI router. Pydantic validates account identities and documented instrument specifications; SQLAlchemy services reuse the existing revision-0003 tables within explicit transactions. Snapshot history is append-only and identical content reuses its hash identity. No legacy trade assignment or calculator change is performed.
+
+Both reads and writes require loopback access and a local header. Management is disabled by default and checks the actual session database target: only disposable SQLite practice paths are permitted. This boundary does not provide production authentication. Compatible broker/server/currency accounts share the specification catalog; it is not an account-owned catalog. See [scope and practice instructions](phase-2b-4a.md) and the [review-required CFD persistence plan](phase-2b-4b-plan.md).
+
 ## Phase 2B.3C position accounting
 
 The separate `analytics/cfd_positions.py` engine accepts `CfdPositionRequest` with an explicit cutoff and `incurred_once` policy. It reuses the single-close engine's mode allowlist and result builder while computing each included exit and cost once. Original risk remains fixed; partial/open results do not supply completed-trade outcome classifications. Native/reporting figures remain separately labelled, and unrealized PnL remains unavailable without a valuation contract.

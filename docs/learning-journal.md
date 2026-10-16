@@ -247,3 +247,23 @@ Expect state partial, 0.04 exited lots, 0.06 remaining, gross/net 8 USD, origina
 ```
 
 Expect four recognized cost records totalling −4 USD, net 22 USD and 1.10R. Add `--json` to inspect the IDs and separate synthetic comparison evidence. The commands read files and return calculations; they do not save journal trades. You learned event-ledger accounting, time cutoffs, immutable original risk, explicit cost recognition and evidence comparison.
+
+## Milestone 2B.4A — accounts, APIs and dated rule cards
+
+An **API endpoint** is a named service desk, such as `POST /api/v1/management/accounts`. POST asks the desk to create something; GET asks it to read something. The React screen sends JSON through a local Next.js bridge to FastAPI. The bridge checks the destination and browser origin; it never asks for broker passwords.
+
+**Pydantic** is the inspector at the desk. It rejects missing currencies, unsupported platforms and incompatible specifications before they reach storage. **Zod** gives quicker feedback in TypeScript, but Python still makes the final decision. Decimal strings such as `"0.01"` preserve exact financial quantities while travelling in JSON.
+
+**SQLAlchemy** translates Python account objects into database rows. An account ID is its unique folder number; the broker label is not its ID. Instrument and snapshot IDs identify the instrument and a dated version of its rules. A snapshot is like a signed-off recipe card: a changed recipe gets a new card rather than quietly rewriting yesterday's card.
+
+The specification catalog is shared between compatible accounts at the same broker/server/settlement scope. That does not mean their trades or balances are merged. Reporting GBP and settlement USD are different labels; no exchange rate is invented. Current practice accounts have no calculated balances and cannot receive historical trades automatically.
+
+A **transaction** groups a database action into one package. If account identity or instrument rules conflict, rollback cancels the package. The snapshot's content hash is a fingerprint used to reuse identical content and detect changes; it is not proof that a broker verified the values.
+
+The practice runner creates a temporary filing cabinet, and the normal journal's cabinet remains closed to management operations. Loopback means this computer; it is a useful local boundary, not a replacement for future user authentication.
+
+### Exercise: one account, two rule cards
+
+Follow [the practice commands](phase-2b-4a.md#try-it-safely). Create the synthetic MT5 account and paste the fixture's `snapshot.specification` object. Save it, then change its contract size and save again. Review both IDs and content hashes: the account ID remains the same, while the changed specification receives a different snapshot ID. Save identical content again and confirm there are still two versions. Try changing the broker and confirm rejection. Stop the practice API when finished; its records are discarded.
+
+You have practiced React form state, TypeScript boundary validation, HTTP requests, Python validation, SQLAlchemy persistence, immutable version history and isolated testing. None of these steps places an order.
