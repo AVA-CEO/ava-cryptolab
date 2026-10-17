@@ -2,6 +2,8 @@
 
 Date: **2026-10-17**. Status: **proposal only; implementation and all migrations are NOT authorized**. No models, API features, migration files or databases are changed by this document. 2B.4A is [accepted on eight owner-reported manual passes](phase-2b-4a-acceptance.md).
 
+Review update: the owner conditionally accepts the architectural direction, **not implementation or final B1 sign-off**. The [B1 design addendum](phase-2b-4b-b1-addendum.md) answers the seven open questions and takes precedence on scope guards, native R, sizing, release artifacts, reduced scope and concurrency tests. In particular, proposed 0004 also adds CFD-reference guards to existing account/instrument tables without changing their rows or migration 0003. B1, B2 and B3 remain separate approvals.
+
 ## 1. Recommendation and boundaries
 
 Create a separate, versioned CFD ledger using existing account/instrument identities and the tested partial-position engine. Keep the crypto `trades`/`trade_exits` path unchanged. Support one original entry and multiple exits; no scale-ins, broker connections, automatic execution, account balances or combined equity calculations in this milestone.
