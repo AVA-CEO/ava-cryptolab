@@ -42,6 +42,6 @@ jobs:
       - run: pip install -r requirements.lock
       - run: pip install --no-deps -e .
       - run: ruff check .
+      - run: ruff format --check .
       - run: pytest
-      - run: alembic upgrade head
-      - run: alembic check
+      - run: python scripts/rehearse_multi_asset.py

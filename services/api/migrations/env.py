@@ -1,14 +1,31 @@
 from alembic import context
 from sqlalchemy import create_engine, event, pool
+from sqlalchemy.engine import make_url
 
 from app.core.config import get_settings
+from app.database.cfd_target import require_disposable_cfd
 from app.database.session import Base
 from app.models import TradingAccount  # noqa: F401
 
 target_metadata = Base.metadata
 
 
+def validate_target(url):
+    try:
+        destination = context.get_revision_argument()
+    except KeyError as error:
+        if error.args != ("destination_rev",):
+            raise
+        destination = None
+    # Retain the existing isolated Accounts bootstrap at its pinned 0003.
+    # Inspection/head/0004 have no such exception. Normal paths always fail.
+    require_disposable_cfd(url, legacy_accounts=destination == "0003")
+
+
 def run_online(connection):
+    # Every online operation is disposable-only during B2, including inspection
+    # and downgrade commands. Missing destinations never skip target validation.
+    validate_target(connection.engine.url)
     context.configure(
         connection=connection,
         target_metadata=target_metadata,
@@ -36,7 +53,10 @@ elif context.config.attributes.get("connection") is not None:
     # Rehearsals supply a connection; never fall back to the personal database URL.
     run_online(context.config.attributes["connection"])
 else:
-    engine = create_engine(get_settings().database_url, poolclass=pool.NullPool)
+    url = context.config.attributes.get("database_url") or get_settings().database_url
+    # Reject before creating an engine or opening any file.
+    validate_target(make_url(url))
+    engine = create_engine(url, poolclass=pool.NullPool)
     if engine.dialect.name == "sqlite":
 
         @event.listens_for(engine, "connect")

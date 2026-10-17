@@ -10,10 +10,13 @@ from alembic import command
 from alembic.config import Config
 from PIL import Image
 from sqlalchemy import create_engine, event, inspect, select, text
+from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session
 
 from app.analytics.performance import performance
 from app.analytics.trades import calculate
+from app.database.cfd_schema_v1 import NAMES as CFD_TABLES
+from app.database.cfd_target import require_disposable_cfd
 from app.models import Trade, TradeExit
 from app.schemas.trade import TradeInput
 
@@ -29,7 +32,9 @@ NEW_TABLES = (
 
 
 def migration_engine(path):
-    engine = create_engine(f"sqlite:///{Path(path).resolve().as_posix()}")
+    url = f"sqlite:///{Path(path).resolve().as_posix()}"
+    require_disposable_cfd(make_url(url))
+    engine = create_engine(url)
 
     @event.listens_for(engine, "connect")
     def transaction_mode(connection, record):
@@ -51,7 +56,7 @@ def migration_config(connection=None, output_buffer=None):
     return config
 
 
-def migrate(engine, revision="head", *, downgrade=False):
+def migrate(engine, revision="0003", *, downgrade=False):
     with engine.begin() as connection:
         action = command.downgrade if downgrade else command.upgrade
         action(migration_config(connection), revision)
@@ -178,22 +183,28 @@ def prepare_legacy(directory):
 def run_rehearsal(directory):
     engine, path, backup, before = prepare_legacy(directory)
     try:
-        migrate(engine)
+        migrate(engine, "head")
         after = legacy_state(engine, directory)
         if before != after:
             raise AssertionError("Legacy records, calculations or screenshots changed.")
         with engine.begin() as connection:
             counts = {
                 name: connection.execute(text(f"SELECT COUNT(*) FROM {name}")).scalar_one()
-                for name in NEW_TABLES
+                for name in (*NEW_TABLES, *CFD_TABLES)
             }
             if any(counts.values()):
                 raise AssertionError("Migration invented account/instrument associations.")
+            if connection.exec_driver_sql("PRAGMA integrity_check").scalar() != "ok":
+                raise AssertionError("Disposable SQLite integrity check failed.")
+            if connection.exec_driver_sql("PRAGMA foreign_key_check").all():
+                raise AssertionError("Disposable SQLite foreign key violations.")
+            command.current(migration_config(connection))
+            command.heads(migration_config(connection))
             command.check(migration_config(connection))
         migrate(engine, "0002", downgrade=True)
         if before != legacy_state(engine, directory):
             raise AssertionError("Safe downgrade changed legacy data.")
-        migrate(engine)
+        migrate(engine, "head")
         with engine.connect() as connection:
             tables = inspect(connection).get_table_names()
         return {

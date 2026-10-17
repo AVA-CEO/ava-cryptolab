@@ -14,15 +14,15 @@ The normal SQLite journal is at `0003` following owner approval and [verificatio
 
 Do not use `NEXT_PUBLIC_` for backend credentials. Next.js reads its environment file; Python settings read the backend `.env`. The root `.env.example` is a reference, not loaded automatically by either service.
 
-For PostgreSQL set `DATABASE_URL=postgresql+psycopg://USER:PASSWORD@HOST:5432/ava` and run `alembic upgrade head` against an empty target database. This changes the connection, not existing data; moving records requires an explicit data migration. PostgreSQL runtime validation is a later check; SQLite is tested locally in Phase 1.
+PostgreSQL remains an intended production target, not a validated B2 target. Migration 0004 currently rejects PostgreSQL until a safe disposable harness and dialect tests are reviewed. Do not point the rehearsal at a broker, hosted production database or the normal journal. No container runtime is required or installed.
 
 ## Development commands
 
 Root: `npm run dev`, `npm run lint`, `npm run typecheck`, `npm run build`.
 
-Backend directory: `../../.venv/Scripts/python.exe -m uvicorn app.main:app --reload` and `../../.venv/Scripts/python.exe -m alembic upgrade head`.
+Backend directory: `../../.venv/Scripts/python.exe -m uvicorn app.main:app --reload` for the existing owner-approved journal. For migration validation use `./.venv/Scripts/python.exe services/api/scripts/rehearse_multi_asset.py` from the repository root; it always creates its own synthetic target.
 
-Create migrations with `alembic revision --autogenerate -m "describe the schema change"`. Review generated SQL, run upgrade and check before committing. Only use downgrade on disposable development databases.
+Further schema changes require separate review. Do not autogenerate against the normal database. B2 online Alembic commands enforce disposable targets even for inspection and downgrade; the existing Accounts launcher can still initialize its fresh temporary 0003 schema. No migrations run automatically during application startup. See the [B2 guide](phase-2b-4b-b2.md).
 
 If port 3000 is occupied, run `npm run dev --workspace @ava/web -- --port 3001`. Browser tests use isolated ports 3100 and 8001 and their own database/build folder. If port 8000 changes, update `API_BASE_URL` and restart Next.js. `UPLOAD_DIR` optionally changes screenshot storage; its default is `./uploads` relative to the backend directory and must remain private and ignored.
 

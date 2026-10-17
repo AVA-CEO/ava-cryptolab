@@ -8,5 +8,6 @@ requirements.lock
 test-results
 playwright-report
 .tools
+.vscode
 .python-version
 .nvmrc

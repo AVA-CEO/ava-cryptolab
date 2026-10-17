@@ -290,4 +290,45 @@ Decimal strings preserve exact written quantities. A calculation manifest record
 
 No database or new code is needed. Draw a position at version 3 with net PnL 8 USD. Pretend two tabs both opened it. Tab A submits key `practice-A`, expected version 3, and saves version 4 with net PnL 26 USD. Its reply is lost. What should happen when A retries the same key/data? **Return the original version-4 receipt, without another revision.** Now tab B submits a different edit expecting version 3. What should happen? **Reject the stale edit and ask B to reload.** If A instead reuses `practice-A` with different data, reject that key conflict. Keep pages 3 and 4 on your paper: this is the history we want the future database to preserve.
 
-This is a design exercise only. You have learned relationships, API boundaries, atomic transactions, idempotency, optimistic concurrency and revision history. **2B.4B implementation, migration 0004 and normal-database access remain unauthorized.**
+This was a design exercise only. You learned relationships, API boundaries, atomic transactions, idempotency, optimistic concurrency and revision history. B1 and disposable-only B2 were subsequently authorized; B3 and normal-database migration remain unauthorized.
+
+## B2 corrective rehearsal — missing instructions are not permission to guess
+
+An Alembic inspection command is like asking a librarian to compare the catalogue with the shelves. It does not ask to travel to a new revision. Our guard wrongly expected every command to name a destination. The correction handles that missing instruction while still checking that the database is disposable.
+
+A regression test repeats the situation that previously failed, so future edits cannot quietly bring the problem back. The corrected rehearsal reached the metadata check successfully. A later currency test then failed for a separate reason: it introduced a EUR commission without supplying EUR rounding instructions. The existing calculator refused to guess. Passing one check does not mean every check passed; the [B2 report](phase-2b-4b-b2-validation.md) records the distinction.
+
+An atomic transaction is a sealed envelope: either every page is filed or none is. Synthetic tests deliberately fail after different save stages to check rollback. Immutable revisions are numbered pages that cannot be erased or rewritten; a current-revision pointer is the bookmark. Concurrency tests must prove that two writers cannot silently replace each other's bookmark updates.
+
+### Exercise: inspect a synthetic currency policy
+
+Open `services/api/tests/fixtures/cfd-position-costs.synthetic.json` in VS Code. Find `rounding.currencies`: it declares USD with two decimal places. On paper, change one commission's currency to EUR. List the additional instructions required: an explicit EUR precision rule and dated EUR-to-USD conversion evidence. Why is a conversion rate alone insufficient? It tells the software how to translate currencies, but not how to round and display each currency. Do not edit your journal or run migrations for this exercise.
+
+## B2 completion ? reproducible pages and safe retries
+
+The authorized B2 work adds ten CFD database tables and a migration rehearsed only on disposable databases. The final backend run passed 557 tests, and desktop/mobile browser regression testing passed 14 tests. PostgreSQL and historical container replay remain unverified. No CFD API, frontend trade form or normal-journal migration was added.
+
+An **SQLAlchemy model** describes a filing drawer in Python. A **migration** is the instruction sheet that builds the drawers in a database. A **primary key** is a unique label on a page; a **foreign key** checks that a referenced folder exists and belongs to the expected account. Compatibility checks additionally ensure that the broker, server, venue and product agree. Matching broker names alone is insufficient.
+
+A **trigger** is a database rule that runs even if someone writes SQL directly. Our triggers reject changes to accepted history and the wrong account/server combination. They cannot prove that a broker supplied a price or that a calculation is correct. Python validates financial meaning; Decimal keeps financial strings out of binary floating-point arithmetic. A database administrator can still alter schema rules, so future authentication and least-privilege access matter too.
+
+A **transaction** keeps the trade pages, bookmark and receipt together. Tests deliberately interrupt saves after children, sealing, bookmark updates and receipts; rollback leaves the old state intact. A compound void-and-replacement operation needs the same envelope for both folders. A verified synthetic backup is a separate saved copy; restoring it into another temporary database proves that the copy is usable without overwriting anything valuable.
+
+**Idempotency** uses a receipt key scoped to an account. Repeating the same command can retrieve its receipt; using that key for different content is a conflict. **Optimistic concurrency** checks the version the editor started with. SQLite's `BEGIN IMMEDIATE` gives one writer the turn, and the second writer must recheck the saved version after waiting. This does not demonstrate PostgreSQL's different locking behavior; PostgreSQL needs its own real tests.
+
+We found that three correct FX records could return from SQL in a different order. Hashing a list with a different order creates a different fingerprint. The synthetic builder now sorts keyed evidence consistently before hashing and reloading. Entry and exit order is retained separately with execution ordinals. B3 must adopt and version its production normalization rules; a test fixture is not an API.
+
+We also learned that ?after one table was created? is different from ?after all tables were created.? Trigger setup now waits for the complete schema and does not reinstall guards when `create_all` finds everything already present. The normal application never calls migrations at startup.
+
+### Exercise: a disposable safety drill
+
+From the repository root, run:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest services/api/tests/test_cfd_target.py -q
+.\.venv\Scripts\python.exe services/api/scripts/rehearse_multi_asset.py
+```
+
+The first command proves that normal path strings are rejected before engine creation; it does not open your journal. The second invents four teaching trades and three exits in its own temporary database, backs them up, migrates, compares them and rehearses reversal. Look for `0004 (head)`, `No new upgrade operations detected`, preservation `true` and zero counts for new tables. A zero count proves no historical account or instrument assignment was invented. Do not replace the temporary path with your journal path.
+
+B3 implementation and normal-database migration still require separate approval. No Docker installation is needed for this exercise.

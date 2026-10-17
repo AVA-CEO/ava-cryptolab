@@ -6,7 +6,7 @@ A cryptocurrency research, trading journal and education platform built incremen
 
 ## Current milestone: Phase 2B.4A — practice accounts and instrument specifications
 
-**2B.4A is accepted and closed (2026-10-17): 8/8 user-reported manual acceptance scenarios passed.** These are the owner's observations, separate from automated results. Read the [acceptance report](docs/phase-2b-4a-acceptance.md). Next is [2B.4B persistence design review](docs/phase-2b-4b-design-review.md) only; implementation and migration 0004 are not authorized.
+**2B.4A is accepted and closed (2026-10-17): 8/8 user-reported manual acceptance scenarios passed.** These are the owner's observations, separate from automated results. Read the [acceptance report](docs/phase-2b-4a-acceptance.md). B1 and disposable-only B2 were subsequently approved. The ten-table CFD schema and migration 0004 are implemented for disposable rehearsal only. Read the [B2 guide](docs/phase-2b-4b-b2.md) and [validation report](docs/phase-2b-4b-b2-validation.md). B3 APIs, normal-journal migration and deployment remain unauthorized.
 
 The new [Accounts workspace guide](docs/phase-2b-4a.md) explains isolated account creation, explicit currencies and immutable specification review. Start its temporary API and separate frontend to test at `http://127.0.0.1:3200/accounts`. Management stays disabled for the normal journal. No new migration or historical account assignment is included. See the [four-step integration roadmap](docs/phase-2b-4-plan.md) and [proposed persistence milestone](docs/phase-2b-4b-plan.md).
 
@@ -60,8 +60,7 @@ Terminal 1 — backend:
 
 ```powershell
 cd services/api
-# Fresh empty development database; the existing normal journal is already at 0003.
-..\..\.venv\Scripts\python.exe -m alembic upgrade head
+# Existing owner-approved journal at 0003 only: do not apply migration 0004 here.
 ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
@@ -73,7 +72,7 @@ npm run dev
 
 Open **http://localhost:3000**. API documentation: **http://127.0.0.1:8000/docs**.
 
-Defaults work without environment files. See [.env.example](.env.example) and [setup guide](docs/development.md) for custom configuration. If the API is offline, the interface displays a helpful status; sample mode still works.
+The backend commands above assume the existing journal schema. For fresh disposable testing, use the [rehearsal commands](docs/phase-2b-4b-b2.md); the B2 guard intentionally rejects normal-database migration commands. Defaults work without environment files. See [.env.example](.env.example) and [setup guide](docs/development.md) for custom configuration. If the API is offline, the interface displays a helpful status; sample mode still works.
 
 ## Validate
 

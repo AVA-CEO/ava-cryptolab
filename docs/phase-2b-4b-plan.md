@@ -1,8 +1,8 @@
 # Proposed 2B.4B — reviewed trade persistence and API integration
 
-Status: **awaiting owner review and implementation authorization**. No migration is included in 2B.4A.
+Status: **B1 and disposable-only B2 authorized; B3 not authorized**. No migration was included in 2B.4A. See the [B2 implementation and B3 review boundary](phase-2b-4b-b2.md) and [actual validation results](phase-2b-4b-b2-validation.md).
 
-Update 2026-10-17: the owner accepted 2B.4A on [eight user-reported manual passes](phase-2b-4a-acceptance.md) and explicitly authorized **design review only** for 2B.4B. The detailed proposal is now in [CFD persistence design review](phase-2b-4b-design-review.md), covering ten new CFD-only tables, a proposed additive 0004, revision/correction policy, exact Decimal storage, retries, concurrency, reproducibility and disposable rehearsal gates. Existing 0003 account/snapshot tables are reused but cannot store the CFD ledger by themselves. No implementation or migration is authorized by either document.
+Historical design checkpoint, before the later B1/B2 approval: the owner accepted 2B.4A on [eight user-reported manual passes](phase-2b-4a-acceptance.md) and explicitly authorized **design review only** for 2B.4B. The detailed proposal is now in [CFD persistence design review](phase-2b-4b-design-review.md), covering ten new CFD-only tables, a proposed additive 0004, revision/correction policy, exact Decimal storage, retries, concurrency, reproducibility and disposable rehearsal gates. Existing 0003 account/snapshot tables are reused but cannot store the CFD ledger by themselves. No implementation or migration is authorized by either document.
 
 ## What we will build
 
