@@ -61,6 +61,8 @@ No Docker or other runtime is installed, and existing journal development does n
 
 ## B3 proposal — review only
 
+The [B3 implementation-readiness review](phase-2b-4b-b3-readiness.md) expands this proposal into preview/create/read contracts, a separate practice runner, runtime blockers, tests and individually approved B3A/B3B/B3C stages. The owner subsequently approved only B3A under Option A; see the [B3A guide](phase-2b-4b-b3a.md). B3B/B3C implementation remains unauthorized. The original B2 proposal below is retained as historical planning.
+
 1. Review a disposable-only persistence service contract: trusted account/snapshot loading; full Pydantic validation; fixed original risk and conversion policy; explicit schema/engine/canonicalizer versions.
 2. Implement preview and transactional create/read first, only after separate authorization. Retain exact native/reporting values and independent broker evidence; verify normalized reload against accepted hashes before returning data.
 3. Review amendments/lifecycle separately: immutable history, reason/changed IDs, conditional head update, terminal void and atomic replacement. No hard-delete endpoint.

@@ -332,3 +332,51 @@ From the repository root, run:
 The first command proves that normal path strings are rejected before engine creation; it does not open your journal. The second invents four teaching trades and three exits in its own temporary database, backs them up, migrates, compares them and rehearses reversal. Look for `0004 (head)`, `No new upgrade operations detected`, preservation `true` and zero counts for new tables. A zero count proves no historical account or instrument assignment was invented. Do not replace the temporary path with your journal path.
 
 B3 implementation and normal-database migration still require separate approval. No Docker installation is needed for this exercise.
+
+## B3 readiness review - a service desk with a locked save button
+
+This milestone is design only. The [readiness plan](phase-2b-4b-b3-readiness.md) explains future API contracts; it does not add endpoints or run migrations. B2's SQLite work is closed. PostgreSQL and historical container replay are still unverified.
+
+An **API endpoint** is a named service desk. Preview asks, "What would these supplied trades calculate to?" Save says, "Check the reviewed facts again and file one complete record." Read says, "Show the page we already filed." A normal read should not recalculate a historical trade with today's rates or software.
+
+A **runtime** is the toolbox in which the recipe executes. Our approved accepted-save policy requires a versioned container toolbox, not just the current Python program. No approved runtime is installed. We can build and test the desk while keeping accepted saves locked. An optional host-Python preview would need separate approval and must say it is unsaved and unapproved for accepted saves. A fake toolbox used in a test proves the desk's behavior, not that the real toolbox works.
+
+A **fingerprint** or hash checks whether data matches the content previously reviewed. B3 must compare the stored rows with the preserved calculation input, not merely check a JSON blob against its own hash. An intact fingerprint is different from rerunning the original recipe, and neither proves a broker supplied the observations. A privileged database owner can alter data and hashes together; future access control still matters.
+
+An **idempotency key** is a receipt number for one account. If a save commits but the reply is lost, retrying the same command and key should return the same receipt. Do not create another trade just because a reply went missing. An **atomic transaction** means all trade pages and that receipt commit together. The design calculates outside the write lock, then checks the account and rule card again inside the transaction before accepting the pages.
+
+### Exercise: two currencies, two R values
+
+On paper, buy a synthetic 0.10-lot USDJPY position at 150.000 with contract size 100000 and stop 149.800. Close 0.04 at 150.200 and 0.06 at 150.300, with no costs. Gross profit is 800 + 1800 = 2600 JPY; original risk is 2000 JPY; native R is 1.30.
+
+Now supply fictional dated USD-per-JPY rates: risk 0.006, first exit 0.0065, second exit 0.0068. Reporting profit is 5.20 + 12.24 = 17.44 USD; original reporting risk is 12 USD; reporting R is about 1.453333. Different dated rates explain the difference. These are teaching numbers, not live quotes or broker specifications. Removing reporting FX under an explicit native-only policy can leave JPY results available while USD results are unavailable; it does not authorize guessing a rate.
+
+No software, database or account needs to change for this exercise. B3A, B3B and B3C each need separate implementation approval. Normal-journal migration, broker access, runtime installation, deployment and a GitHub push remain separate approvals too.
+
+## B3A Option A - checking an envelope without running the calculator
+
+The owner authorized B3A after the readiness lesson above. The [B3A guide](phase-2b-4b-b3a.md) contains the file map, commands and actual validation report. B3B and B3C remain separate decisions.
+
+An **API endpoint** is a named service desk. `GET /api/v1/cfd/status` asks which services are available. `POST /api/v1/cfd/preview` hands over an unsaved draft. FastAPI routes that request to Python. HTTP status codes are short labels: 200 means the status request succeeded, 422 means the supplied fields failed validation, and 503 means the required calculator is unavailable.
+
+**Pydantic validation** is the desk's checklist. It checks that quantities are exact Decimal strings, timestamps name a timezone, exits do not exceed original lots and currency evidence has the right references. For example:
+
+```json
+{ "price": "150.000", "lots": "0.10" }
+```
+
+The quotes matter. This HTTP boundary rejects numeric `0.1` for lots instead of first turning a binary floating-point number into money. The existing internal calculation contracts and crypto engine are unchanged. Validation can establish that a specification is consistent; it cannot establish that a broker supplied it.
+
+An **ID** is a checked label, not the whole account. SQLAlchemy loads the account and immutable instrument snapshot from the new practice database. Python compares broker, server, venue, product and settlement currency. A caller cannot slip a different rule card into the request. Snapshot hashing checks that the retained rule card has not changed; it is not a broker authenticity certificate.
+
+A **separate practice runner** is a new exercise notebook. It creates a new temporary database, builds its approved 0004 tables and adds clearly synthetic identities. It never selects your normal notebook or resumes the older Accounts session. The guard checks the actual engine URL and the SQLite connection argument before opening a database. Read-only serving sessions add another boundary against accidental writes. The normal app does not gain these routes.
+
+The **preview boundary** is the desk and checklist. An **operational calculator** is the approved toolbox that actually runs the recipe. We built the desk, but that toolbox is unavailable. Therefore a valid preview returns 503 with `calculation_runtime_unavailable`. It does not return invented profit or silently use host Python. Even a returning fake provider in an automated test cannot make the route report success. Test doubles prove control flow, not real financial execution or replay.
+
+**Saving remains unavailable** because B3A neither implements a save endpoint nor has an approved calculation release. A future accepted trade must retain its original risk, exact results, dated conversion evidence and release identity together. The existence of empty ledger tables is not permission to file records. The original stop can be validated now without calculating or freezing original risk.
+
+### Exercise: distinguish three responses
+
+Follow the isolated-runner commands in the B3A guide. First request status with the local header: expect 200 and disabled capabilities. Submit the generated USDJPY example: expect 503, not PnL. In a copy of that JSON, change the lots string to a JSON number: expect 422. Finally omit the local header: expect 403. Explain each result in one sentence: readiness, missing runtime, invalid input, denied access. Stop the runner with Ctrl+C. Never substitute a journal database path, enter real trades or treat these steps as a calculation test.
+
+You have learned API routing, strict transport contracts, trusted reference loading, disposable environments and the distinction between a validated request and an executed financial calculation. PostgreSQL and historical container replay remain unverified.
