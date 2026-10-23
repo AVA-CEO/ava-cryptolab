@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import re
 from collections import deque
 from ipaddress import ip_address
 from time import monotonic
@@ -117,6 +118,10 @@ class CfdAccessMiddleware:
                 raise CfdTargetRejected("Workspace not ready")
             path, method = scope["path"], scope["method"]
             allowed = {"/api/v1/cfd/status": "GET", "/api/v1/cfd/preview": "POST"}
+            if re.fullmatch(
+                r"/api/v1/cfd/positions(?:/[^/]{1,100}(?:/revisions(?:/[^/]{1,9})?)?)?", path
+            ):
+                allowed[path] = "GET"
             if path not in allowed:
                 await respond(404, "route_not_found", "CFD operation is not available.")
                 return
@@ -127,6 +132,9 @@ class CfdAccessMiddleware:
                     "This CFD method is not available.",
                     {"Allow": allowed[path]},
                 )
+                return
+            if len(scope.get("query_string", b"")) > 2048:
+                await respond(400, "invalid_query", "The CFD query exceeds its size limit.")
                 return
             preview = method == "POST"
             queue = self.previews if preview else self.reads

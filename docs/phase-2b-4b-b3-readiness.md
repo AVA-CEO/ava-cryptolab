@@ -1,5 +1,7 @@
 # B3 implementation-readiness review
 
+**Later approval: B3B-R READ-ONLY only.** The owner authorized the four account-scoped GET routes and new synthetic fixture provisioning. See the [B3B-R report](phase-2b-4b-b3b-r.md). This does not authorize the full B3B stage, any accepted creation/lifecycle API, B3C, runtime installation, normal-journal migration, deployment or push. Earlier proposal/approval wording below is retained as historical context; only the explicitly approved subsets have been implemented.
+
 **Approval update: B3A only, Option A, was explicitly authorized after this review.** Its implementation and measured results are recorded in the [B3A guide](phase-2b-4b-b3a.md). B3B and B3C remain unauthorized. The proposals below describe the broader future API and do not grant permission to implement later stages. B2's validated SQLite scope is accepted and closed at `8ce38bbc4b322fa7babf2014c90cc95aa2a157dd`. PostgreSQL execution and historical container replay remain **UNVERIFIED**. No runtime installation, normal-journal migration, deployment or push is authorized.
 
 ## 1. What exists and what is missing

@@ -380,3 +380,31 @@ The **preview boundary** is the desk and checklist. An **operational calculator*
 Follow the isolated-runner commands in the B3A guide. First request status with the local header: expect 200 and disabled capabilities. Submit the generated USDJPY example: expect 503, not PnL. In a copy of that JSON, change the lots string to a JSON number: expect 422. Finally omit the local header: expect 403. Explain each result in one sentence: readiness, missing runtime, invalid input, denied access. Stop the runner with Ctrl+C. Never substitute a journal database path, enter real trades or treat these steps as a calculation test.
 
 You have learned API routing, strict transport contracts, trusted reference loading, disposable environments and the distinction between a validated request and an executed financial calculation. PostgreSQL and historical container replay remain unverified.
+
+## B3B-R - opening a filed page without rewriting it
+
+A **GET request** asks the API to retrieve a resource. Think of asking a librarian to show a numbered page. It must not place a trade, save a new version, update an exchange rate or run today's calculator. Our four new GET routes live only in the isolated practice API; the normal journal app is unchanged. The [B3B-R guide](phase-2b-4b-b3b-r.md) contains the exact file map, commands and validation report.
+
+**Read-only** is also enforced at the database connection. SQLite's `query_only=ON` rejects writes. An explicit read transaction gives the verifier one stable photograph of the database while it checks the head, revision and evidence. Otherwise, inspecting one page before an edit and another page afterward could mix two different moments. Closing this read transaction changes no trading records.
+
+A **hash** is a fingerprint of exact written content. Before displaying money, we compare stored documents with their fingerprints and reconstruct the input from the normalized rows: entries, exits, commissions, swaps and dated FX. Checking only the stored JSON against its own hash would not tell us whether its rows agree. A mismatch produces an error and withholds values; the reader does not quietly repair a page. A database owner who rewrites content and every matching fingerprint can defeat hash-only checks, so a fingerprint is not a signature or proof of the mathematics.
+
+These three things are different:
+
+| Evidence                  | Meaning                                                                                                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accepted calculation      | A future result produced under the approved release/runtime policy, with retained provenance and verification. This is not enabled.                                       |
+| Saved historical result   | A result retained from an earlier point in time. Its format, hashes, normalized evidence and provenance still need checking; being saved alone does not make it accepted. |
+| Synthetic testing fixture | An invented, clearly labelled example used to test software. Our new read fixtures contain hand-declared results, not broker records or approved runtime output.          |
+
+**Historical retrieval must not recalculate.** Suppose a saved USDJPY page used a supplied 0.005 USD-per-JPY observation at its recorded time. A rate fetched today answers a different question and could change the displayed historical USD profit. The GET returns the preserved result and dated evidence, with replay explicitly `not_run`. It does not claim that checking hashes reran the original recipe.
+
+**Pagination** divides a collection into manageable pages. A signed cursor is a checked bookmark bound to the account, collection, parent and page size. It is not a password. Changing those instructions or restarting the practice app invalidates the bookmark. Account scoping prevents a position from another synthetic account appearing under the requested account; public multiuser authentication is still outside scope.
+
+### Exercise: two historical pages, one original risk
+
+Run the new isolated practice runner and follow the catalog commands in the B3B-R guide. Retrieve current revision 2 and historical revision 1. Find net 2400 JPY on the closed page and 700 JPY on the partial page. Compare `original_risk_sha256`: it should match, with original risk 2000 JPY on both pages. Explain why closing 0.04 lots did not replace the original 0.10-lot risk denominator. Inspect `provenance` and `replay`: why does this successful GET still not prove accepted calculation or historical replay?
+
+Do not edit a database to test corruption yourself; automated tests use newly created adversarial fixtures. A POST must remain unavailable, and the valid preview example must still return 503 `calculation_runtime_unavailable`. Stop the practice runner when done. No normal journal, existing practice records or backup is involved.
+
+You learned GET semantics, database read-only transactions, stable snapshots, normalized evidence reconstruction, fingerprints versus replay, explicit provenance and scoped pagination. Runtime readiness and accepted saving require separate review and authorization.

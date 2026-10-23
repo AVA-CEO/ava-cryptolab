@@ -321,11 +321,11 @@ def test_external_client_and_missing_local_header(case):
 @pytest.mark.parametrize(
     "method,path,expected",
     [
-        ("post", "/positions", 404),
-        ("get", "/positions", 404),
-        ("get", "/positions/anything", 404),
-        ("post", "/positions/anything/revisions", 404),
-        ("delete", "/positions/anything", 404),
+        ("post", "/positions", 405),
+        ("get", "/positions", 422),
+        ("get", "/positions/anything", 422),
+        ("post", "/positions/anything/revisions", 405),
+        ("delete", "/positions/anything", 405),
         ("post", "/status", 405),
         ("get", "/preview", 405),
         ("options", "/preview", 405),
@@ -419,7 +419,14 @@ def test_no_openapi_or_normal_app_mount(case):
     _, app, client = case
     assert client.get("/openapi.json").status_code == 404
     assert all(not getattr(route, "path", "").startswith(ROOT) for route in normal_app.routes)
-    assert set(app.openapi()["paths"]) == {ROOT + "/status", ROOT + "/preview"}
+    assert set(app.openapi()["paths"]) == {
+        ROOT + "/status",
+        ROOT + "/preview",
+        ROOT + "/positions",
+        ROOT + "/positions/{position_id}",
+        ROOT + "/positions/{position_id}/revisions",
+        ROOT + "/positions/{position_id}/revisions/{revision_no}",
+    }
 
 
 def test_streaming_body_limit_without_content_length(case):

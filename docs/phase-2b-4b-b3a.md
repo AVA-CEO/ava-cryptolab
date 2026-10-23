@@ -1,5 +1,7 @@
 # B3A: isolated CFD API boundary, Option A
 
+**Historical milestone note:** the owner subsequently authorized B3B-R, adding only verified synthetic GET routes. Its [implementation report](phase-2b-4b-b3b-r.md) describes the current runner, read catalog and `can_read_saved_positions: true` capability. B3A's results and original disabled-read behavior below are retained as historical evidence. Accepted saving and actual preview execution remain disabled; no full B3B authorization is implied.
+
 B3A implements a separate local service desk for synthetic CFD requests. It validates inputs but does not execute financial previews or save CFD positions. No approved container release is operational. B3B, B3C, runtime installation and a GitHub push still require separate approval.
 
 ## What works

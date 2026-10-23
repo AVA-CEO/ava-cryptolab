@@ -1,4 +1,6 @@
-"""Separate B3A app factory. Default disabled; normal app/routes are untouched."""
+"""Isolated synthetic CFD app. Default disabled; normal app/routes are untouched."""
+
+from secrets import token_bytes
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -6,6 +8,7 @@ from pydantic import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
 from app.api.cfd import router
+from app.api.cfd_reads import router as reads_router
 from app.core.cfd_access import CfdAccessMiddleware
 from app.core.cfd_errors import CfdProblem, error_response, validation_issues
 from app.core.cfd_settings import CfdPracticeSettings
@@ -23,8 +26,10 @@ def create_app(*, workspace=None, settings=None):
     )
     app.state.workspace = workspace
     app.state.runtime = UnavailableRuntime()
+    app.state.cursor_key = token_bytes(32)
     app.add_middleware(CfdAccessMiddleware, workspace=workspace, settings=settings)
     app.include_router(router)
+    app.include_router(reads_router)
 
     def fail(request, status, code, message, issues=()):
         return error_response(status, code, message, request.state.cfd_request_id, issues)

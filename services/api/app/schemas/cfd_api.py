@@ -91,7 +91,8 @@ class CfdStatusV1(FinancialContract):
     approved_release: Literal[False] = False
     preview_available: Literal[False] = False
     can_create: Literal[False] = False
-    can_read_saved_positions: Literal[False] = False
+    can_read_saved_positions: Literal[True] = True
+    read_provenance: Literal["synthetic_fixture_only"] = "synthetic_fixture_only"
     host_fallback: Literal[False] = False
     historical_replay: Literal["unverified"] = "unverified"
     postgresql: Literal["unverified"] = "unverified"

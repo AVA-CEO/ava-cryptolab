@@ -85,6 +85,9 @@ class CfdWorkspace:
             raise CfdTargetRejected("CFD workspace is not provisioned")
         self.check_target(self.engine.url)
         with self.engine.connect() as connection:
+            # SQLite legacy transaction mode does not BEGIN on SELECT. Explicitly
+            # hold one read snapshot for the head, children, hashes and response.
+            connection.exec_driver_sql("BEGIN")
             if connection.exec_driver_sql("PRAGMA query_only").scalar() != 1:
                 raise CfdTargetRejected("CFD serving connection must be read-only")
             if connection.exec_driver_sql("PRAGMA foreign_keys").scalar() != 1:
@@ -119,6 +122,7 @@ def provision(workspace):
     from alembic import command
     from alembic.config import Config
 
+    from app.services.cfd_read_fixtures import seed_read_fixtures
     from app.services.cfd_samples import seed_samples
 
     root = Path(__file__).resolve().parents[2]
@@ -132,8 +136,11 @@ def provision(workspace):
     with workspace.engine.begin() as connection:
         with Session(bind=connection) as session, session.begin():
             workspace.samples = seed_samples(session)
-        assert connection.exec_driver_sql("PRAGMA integrity_check").scalar() == "ok"
-        assert connection.exec_driver_sql("PRAGMA foreign_key_check").all() == []
+            seed_read_fixtures(workspace, session)
+        if connection.exec_driver_sql("PRAGMA integrity_check").scalar() != "ok":
+            raise CfdTargetRejected("New synthetic fixture database failed integrity validation")
+        if connection.exec_driver_sql("PRAGMA foreign_key_check").all():
+            raise CfdTargetRejected("New synthetic fixture database failed foreign key validation")
     workspace._file_identity = _identity(workspace.path)
     workspace.ready = True
 

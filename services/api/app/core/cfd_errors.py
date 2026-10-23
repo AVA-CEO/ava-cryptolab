@@ -76,6 +76,8 @@ def validation_issues(error):
         "observed_at",
         "applies_at",
         "max_age_seconds",
+        "limit",
+        "cursor",
     }
     return [
         {

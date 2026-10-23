@@ -1,4 +1,4 @@
-"""Explicit fresh B3A runner. No path argument, host calculator or saved positions."""
+"""Fresh CFD practice runner with synthetic reads. No path argument or accepted saves."""
 
 import argparse
 import json
@@ -21,10 +21,14 @@ def main():
         for symbol, body in workspace.samples["previews"].items():
             path = workspace.directory / ("preview-" + symbol.lower() + ".json")
             path.write_text(json.dumps(body, indent=2), encoding="utf-8")
+        (workspace.directory / "read-catalog.json").write_text(
+            json.dumps(workspace.samples["read_catalog"], indent=2), encoding="utf-8"
+        )
         print("NEW SYNTHETIC CFD workspace, revision 0004:", workspace.directory)
         print("API: http://127.0.0.1:8003/api/v1/cfd/status")
         print("Required header: X-AVA-Local: cfd-practice-v1 (local boundary, not authentication)")
         print("Valid previews return 503: no approved runtime, no host fallback, no saving.")
+        print("Read-only synthetic ledger examples: read-catalog.json (not accepted calculations).")
         print("Request samples: preview-usdjpy.json, preview-xauusd.json, preview-xagusd.json")
         print("Only this new workspace is removed on a normal stop. No existing session is loaded.")
         uvicorn.run(
