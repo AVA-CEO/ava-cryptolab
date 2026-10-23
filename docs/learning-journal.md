@@ -408,3 +408,33 @@ Run the new isolated practice runner and follow the catalog commands in the B3B-
 Do not edit a database to test corruption yourself; automated tests use newly created adversarial fixtures. A POST must remain unavailable, and the valid preview example must still return 503 `calculation_runtime_unavailable`. Stop the practice runner when done. No normal journal, existing practice records or backup is involved.
 
 You learned GET semantics, database read-only transactions, stable snapshots, normalized evidence reconstruction, fingerprints versus replay, explicit provenance and scoped pagination. Runtime readiness and accepted saving require separate review and authorization.
+
+## R1 - a toolbox needs room on the workbench
+
+The [R1 machine and security review](phase-2b-4b-r1-runtime-review.md) records the actual observations and the proposed installation/recovery gates. Nothing was installed or enabled. The laptop has 16 GiB of physical RAM, but only 2.28–2.73 GiB was available during the snapshots. Owning a large workbench is different from having an empty workbench.
+
+**WSL** means Windows Subsystem for Linux. WSL 2 provides a Linux kernel in a virtualized environment so Linux programs can run alongside Windows programs. It still uses real CPU, RAM and disk. Finding `wsl.exe` is like finding a doorbell: it does not prove the room behind it is ready. We found the command file, but the WSL and Virtual Machine Platform features were disabled; the exact installed WSL product version was not established. We did not launch it to find out.
+
+**Virtualization** lets a computer host a separate operating environment. The processor model supports it, and Windows' existing virtualization-based security is running. That does not prove a Linux VM or calculator works. The conflicting low-level CPU flags were marked UNKNOWN rather than used as a reason to change BIOS settings or turn security off. A read-only preflight checks signs of readiness without trying to make the system ready.
+
+A **container** is a packaged process with its libraries and restrictions. Think of a recipe in a sealed toolbox, placed inside a larger workshop. On this Windows design the Linux workshop is WSL; the calculator container is the toolbox. A 256 MiB calculator limit does not mean the whole WSL/runtime consumes only 256 MiB. VM and container budgets are separate.
+
+**Docker Desktop** is one application that manages that workshop and its containers. Podman is another approach; Microsoft's WSL container tooling is another candidate. They need their own setup and tests. Familiar commands or a lower number of installed applications do not prove lower memory consumption or equivalent security. Our conditional preference is Docker with WSL 2, after resource and approval gates pass.
+
+An **OCI image** is a container package following the Open Container Initiative's standards. Its layers, configuration and manifest identify what will run. A tag such as `latest` is a movable label. A **digest** is a fingerprint of specific bytes. The image manifest digest, image configuration digest, source-code hash and archive-file checksum identify different things; one cannot stand in for all the others.
+
+A **signature** is an approval seal made with a private key and checked with a public key. The proposed AVA policy uses Ed25519 signatures over a precisely defined canonical release manifest. This choice still needs owner sign-off and implementation tests. No real signing key was created. The executor would receive only approved public keys, never the private signing key. A signature from an unknown key is not trustworthy simply because that key arrived with the package.
+
+**Canonical** means there is one defined way to write the signed data. Otherwise two documents could mean the same thing but have different bytes and fingerprints. The release manifest records the image identity, Python/dependency versions, Decimal context, supported contracts and limits. This proposed signed software manifest is different from our existing synthetic test manifests. We cannot turn a fixture into accepted financial evidence by changing a label.
+
+**Historical financial replay** means using the original retained recipe, policy and inputs again, including the original dated FX evidence and risk basis. It does not mean asking today's calculator for today's exchange rate. Reading saved evidence is also different from rerunning the recipe. If the old artifact, verifier or compatible runtime is missing, the honest result is replay unavailable. Keep the saved evidence; do not invent a replacement.
+
+**Rollback** means undoing only changes made by the approved installation, using a record of the original state. Uninstalling a runtime can delete its images or volumes. It must not become permission to delete a different Linux environment, overwrite a journal backup, shut down all WSL distributions or disable Windows security. A stopped runtime is not the same as a fully removed runtime, and an idle icon is not proof that all memory has been released.
+
+### Exercise: decide whether to start, without starting anything
+
+Open the R1 matrix. Find one PASS (the processor's hardware capability), one FAIL (the currently disabled WSL prerequisite) and one UNKNOWN (actual offline calculator execution). On paper, compare 2.73 GiB available RAM with the proposed 3 GiB VM ceiling. Why is there no safe promise that it fits, even though the laptop contains 16 GiB? What else must remain available for Windows, VS Code and Python?
+
+Now imagine two packages both labelled `calculator-v1`, but with different image digests. Explain why the label alone cannot authorize execution. Finally, explain why a valid signature still does not prove that a broker supplied a trade or that historical replay succeeded. No command, key, calculation or database change is needed for this exercise.
+
+You learned machine capability versus operational readiness, WSL/VM resource sharing, containers, image identity, signatures, offline trust, replay and reversible installation planning. R2, signing-key generation, approved previews and accepted saves remain separate approvals. PostgreSQL and historical container replay remain unverified.
