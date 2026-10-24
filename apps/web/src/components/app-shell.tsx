@@ -139,7 +139,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             >
               <n.icon size={19} />
               <span>{n.label}</span>
-              {n.href === "/trivia" && <small>SOON</small>}
             </Link>
           ))}
         </nav>

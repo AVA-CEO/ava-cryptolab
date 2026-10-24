@@ -28,6 +28,18 @@ def seed_samples(session):
     }
     for symbol, mode, category, contract, tick, pip, price, stop, exit_price, profit in [
         (
+            "EURUSD",
+            "forex",
+            "forex",
+            "100000",
+            "0.00001",
+            "0.0001",
+            "1.10000",
+            "1.09800",
+            "1.10200",
+            "USD",
+        ),
+        (
             "USDJPY",
             "forex",
             "forex",

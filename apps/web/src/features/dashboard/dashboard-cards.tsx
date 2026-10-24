@@ -39,7 +39,7 @@ export function LearningCard() {
         <div>
           <small>START WITH THE FOUNDATIONS</small>
           <strong>What is cryptocurrency?</strong>
-          <span>Level 1 · Beginner path · Phase 4</span>
+          <span>8 practical lessons · Start with the basics</span>
         </div>
       </div>
       <Button asChild>
@@ -50,7 +50,8 @@ export function LearningCard() {
       </Button>
       <div className="learning-footer">
         <span>
-          <Compass size={14} />5 learning levels planned
+          <Compass size={14} />
+          16 knowledge checks available
         </span>
         <span>
           <Sparkles size={14} />

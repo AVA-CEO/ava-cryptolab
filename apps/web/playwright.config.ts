@@ -18,6 +18,14 @@ export default defineConfig({
   ],
   webServer: [
     {
+      command: `"${resolve(__dirname, process.platform === "win32" ? "../../.venv/Scripts/python.exe" : "../../.venv/bin/python")}" scripts/e2e_cfd_server.py`,
+      cwd: resolve(__dirname, "../../services/api"),
+      // No HTTP readiness probe: the guarded API requires an explicit local header.
+      port: 8003,
+      reuseExistingServer: false,
+      timeout: 120000,
+    },
+    {
       command:
         process.platform === "win32"
           ? `"${resolve(__dirname, "../../.venv/Scripts/python.exe")}" scripts/e2e_server.py`
@@ -30,7 +38,11 @@ export default defineConfig({
     {
       command: "npm run dev -- --hostname 127.0.0.1 --port 3100",
       url: "http://127.0.0.1:3100",
-      env: { API_BASE_URL: "http://127.0.0.1:8001", AVA_E2E: "1" },
+      env: {
+        API_BASE_URL: "http://127.0.0.1:8001",
+        CFD_API_BASE_URL: "http://127.0.0.1:8003",
+        AVA_E2E: "1",
+      },
       reuseExistingServer: false,
       timeout: 120000,
     },

@@ -15,6 +15,7 @@ export type Summary = z.infer<typeof summarySchema>;
 export type DashboardResult =
   { status: "connected"; summary: Summary } | { status: "unavailable" };
 export async function getDashboard(): Promise<DashboardResult> {
+  if (process.env.VERCEL) return { status: "unavailable" };
   try {
     const host = (await headers()).get("host")?.split(":")[0];
     if (host && !["localhost", "127.0.0.1"].includes(host))

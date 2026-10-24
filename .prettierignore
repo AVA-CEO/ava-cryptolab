@@ -2,7 +2,10 @@ node_modules
 .next
 .next-e2e
 .next-practice
+.local-cfd-preview
+.next-cfd-preview
 .venv
+.pytest_cache
 package-lock.json
 requirements.lock
 test-results

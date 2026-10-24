@@ -24,6 +24,8 @@ coverage/
 *.log
 .DS_Store
 .tools/
+.local-cfd-preview/
+.next-cfd-preview/
 *.tsbuildinfo
 next-env.d.ts
 # Private material must never become portfolio source.

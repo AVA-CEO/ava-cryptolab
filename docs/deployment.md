@@ -1,10 +1,12 @@
 # Deployment preparation
 
-Phase 1 is a local foundation, not a public launch.
+The web app targets Vercel; no Android/native distribution is planned. This is deployment preparation, not permission to deploy. The [working web delivery guide](web-product-delivery.md) defines the current safe educational frontend preview and remaining financial-production requirements.
 
 ## Frontend / Vercel
 
-Use the monorepo with root directory `apps/web`. Install workspace dependencies from the repository lockfile and use the Next.js preset (`next build`). Set server-only `API_BASE_URL` to the future backend HTTPS origin. No market secrets belong in browser-visible variables. Offline backend state displays safely; it does not synthesize user financials.
+Use the monorepo with root directory `apps/web`, its workspace lockfile and the Next.js preset (`next build`). Current Vercel mode explicitly disables financial API bridges and server-side journal retrieval. Do not set a personal backend URL or upload financial data to this preview. Educational pages, stateless quiz grading and clearly simulated market/dashboard examples need no financial database. No secrets belong in browser-visible variables.
+
+Vercel filesystem/SQLite storage is not a persistent financial database. Public financial functionality requires authenticated ownership, durable database/attachment storage, a separately hosted secure Python API and a future reviewed bridge configuration. No current production-finance configuration is provided.
 
 ## Backend / compatible Python host
 

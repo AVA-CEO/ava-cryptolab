@@ -9,6 +9,20 @@ import {
 } from "lucide-react";
 export const navigation = [
   {
+    href: "/insights",
+    label: "AVA Trading IQ",
+    icon: LayoutDashboard,
+    phase: 2,
+    description: "Recorded performance and evidence-based review.",
+  },
+  {
+    href: "/cfd-preview",
+    label: "Forex & Metals",
+    icon: FlaskConical,
+    phase: 2,
+    description: "Verified local practice previews, without saving.",
+  },
+  {
     href: "/",
     label: "Command Center",
     icon: LayoutDashboard,

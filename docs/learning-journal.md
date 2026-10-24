@@ -438,3 +438,47 @@ Open the R1 matrix. Find one PASS (the processor's hardware capability), one FAI
 Now imagine two packages both labelled `calculator-v1`, but with different image digests. Explain why the label alone cannot authorize execution. Finally, explain why a valid signature still does not prove that a broker supplied a trade or that historical replay succeeded. No command, key, calculation or database change is needed for this exercise.
 
 You learned machine capability versus operational readiness, WSL/VM resource sharing, containers, image identity, signatures, offline trust, replay and reversible installation planning. R2, signing-key generation, approved previews and accepted saves remain separate approvals. PostgreSQL and historical container replay remain unverified.
+
+## P1 — keep the careful bookkeeping, simplify the kitchen
+
+The owner has chosen **Path B**. The [local policy](path-b-local-calculation-policy.md), [release specification](path-b-python-release-spec.md) and [product-first roadmap](product-first-roadmap.md) document the proposed rules and the next visible feature. This milestone writes documentation; it does not switch on a calculator, save a CFD position or change a database. Earlier container documents remain history, not mistakes to erase.
+
+Think of the calculator as a recipe and the database as a bound accounting book. A container packages a larger kitchen around the recipe. For a personal journal, we can propose using a carefully checked Python kitchen already on the laptop, while retaining the same rules about entries, costs, currencies and corrections. We do not need to throw away the accounting book to change kitchens.
+
+**Version-pinned** means choosing exact software, not whatever happens to be newest. A **release manifest** lists the recipe, interpreter, dependencies, calculation settings and their fingerprints. A **registry** is the owner's list of which release may do which job. Preview permission is not save permission. Even a correct result cannot grant itself permission to enter the journal.
+
+A **build hash** identifies a defined software descriptor. A **release-manifest hash** identifies the full software description. A future **evidence-envelope hash** identifies the software description plus that revision's local execution/approval facts. These are different fingerprints, like an oven's model number, a recipe card's fingerprint and a particular meal's receipt. Path B must never call a Python build hash a container-image digest.
+
+**Canonical** means writing the same data in one precise form before hashing it. For example, a financial zero becomes `"0"`, and timestamps use UTC with recorded precision. Existing instrument snapshots keep their original agreed spelling and fingerprint. A new serializer must not rewrite old snapshots or pretend the existing synthetic test format has become accepted personal evidence.
+
+The local profile is named `local_personal`. It must be deliberately selected and approved. **Fail closed** means a missing or changed release produces an unavailable message rather than quietly using a different calculator. Until P2 is implemented and its actual preview release is approved, the current valid API preview still returns 503 `calculation_runtime_unavailable`.
+
+**Isolation has limits.** A Python virtual environment keeps packages organized; it does not lock the calculator away from Windows. The proposed small worker process makes timeouts and bounded output practical, but it still runs with your user's permissions. Hashes help catch changed files; they do not defeat someone who can rewrite both the files and expected hashes. Signed containers remain an optional future assurance level.
+
+**Financial rules stay careful.** Original risk is the starting measuring stick, not the quantity left after an exit. Costs are counted once through the chosen cutoff. JPY, USD and USDT are separate currencies. A saved result must retain the rate/source/time actually supplied, not quietly use today's rate. Native results can remain available while reporting conversions are unavailable; an unsupported mixed-currency cost still needs an honest explanation.
+
+**Reading is not replaying.** A future GET checks that the saved pages fit together, then shows their preserved values. Replay would run the exact older recipe again and compare results. If the original runtime is missing, we keep the pages and say replay is unavailable. A successful synthetic test, a locally accepted record and a broker-reconciled record are three different claims.
+
+### Exercise: review a preview without running software
+
+On paper, start with the roadmap's synthetic EURUSD example: 0.10 lots, declared contract size 100000, entry 1.10000 and original stop 1.09800. Original risk is 20 USD. Closing 0.04 lots at 1.10200 gives 8 USD gross; 0.06 lots remain. Why is realized gross R 8 / 20 = 0.40R rather than a fraction based on the remaining lots?
+
+Now close the remaining 0.06 lots at 1.10300: cumulative gross is 26 USD. Add signed costs of -2, -1 and -1 USD, each once. Net is 22 USD and realized R is 1.10R. Identify which parts belong in the immutable original-risk record, which belong in executions/costs, and which belong in the software release manifest. Should changing the software version change these already saved facts? Explain why a `saved:false` preview grants no save permission.
+
+You learned explicit execution profiles, versioned releases, separate approval purposes, build versus evidence identity, canonicalization, local trust limitations and product-first delivery. Next is review of P1 and separate P2 implementation/release approval, not automatic host activation. No journal, backup, practice record or migration changed during this documentation milestone.
+
+## Working web delivery — connect the buttons to real behavior
+
+The later owner authorization moved us from P1 documents into implementation. The [delivery guide](web-product-delivery.md) has the actual startup commands. Forex/metals previews now use a frozen copy of the existing Python engine and dependencies. Starting that runner requires the exact reviewed release digest; changed bytes fail verification. The preview-only manifest is intentionally smaller than the full accepted-evidence proposal, and cannot authorize saving.
+
+A **server bridge** is a controlled doorway: the Next.js screen sends decimal strings to its own API, which forwards them only to the explicitly configured local practice service. Python validates the account/specification, runs the verified worker and returns results. Browser code never calculates the journal PnL or handles broker credentials. On Vercel, this financial doorway is closed until secure cloud persistence and authentication exist.
+
+The first browser tests caught a useful integration lesson: a server's internal URL can differ from the browser's public host. Origin checks must validate the public address without accepting foreign origins. Another test caught an examples route being registered on the default unavailable API; it now appears only under explicit local preview configuration. Existing crypto and default-unavailable behavior remain regression-tested.
+
+Trivia answers are checked by the Next.js server. The question catalog omits answer keys, and submitting a claimed score is rejected. Lesson completion, quiz first-attempt scores and watchlist symbols persist in browser storage only. That is convenient practice progress, not authenticated account evidence; it can be cleared or edited. The candle exercise is explicitly unscored browser learning.
+
+### Exercise: use, inspect, refresh
+
+In the NEW practice website, calculate the default EURUSD partial exit: gross 8 USD, original risk 20 USD, 0.06 lots remaining. Change exit lots to 0.11 and observe validation rather than an invented result. Check that no Save button exists. Then complete a lesson, answer a quiz and refresh: learning progress should return, while no financial preview was saved. Explain why persisting a learning checkbox is different from accepting a financial trade.
+
+You learned frontend/server boundaries, typed financial results, explicit release selection, regression testing, browser storage versus trusted records, and the difference between Vercel frontend hosting and durable financial persistence. No normal journal, preserved backup, existing practice data or database migration was changed by this delivery.

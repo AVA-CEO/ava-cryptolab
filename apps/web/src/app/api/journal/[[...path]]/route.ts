@@ -4,6 +4,14 @@ async function proxy(
   request: NextRequest,
   context: { params: Promise<{ path?: string[] }> },
 ) {
+  if (process.env.VERCEL)
+    return Response.json(
+      {
+        detail:
+          "Financial records are disabled on Vercel until authentication and durable storage are configured.",
+      },
+      { status: 403 },
+    );
   const { path = [] } = await context.params;
   const publicUrl = new URL(
     `${request.nextUrl.protocol}//${request.headers.get("host") ?? request.nextUrl.host}`,

@@ -4,6 +4,11 @@ async function proxy(
   request: NextRequest,
   context: { params: Promise<{ path?: string[] }> },
 ) {
+  if (process.env.VERCEL)
+    return Response.json(
+      { detail: "Account management is disabled on Vercel." },
+      { status: 403 },
+    );
   const { path = [] } = await context.params;
   const route = path.join("/");
   const fail = (detail: string, status: number) =>

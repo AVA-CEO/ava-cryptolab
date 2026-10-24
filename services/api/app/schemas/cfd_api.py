@@ -120,6 +120,26 @@ class CfdIssue(FinancialContract):
     message: str
 
 
+class CfdLocalStatusV2(FinancialContract):
+    schema_version: Literal["cfd-status-v2"] = "cfd-status-v2"
+    execution_kind: Literal["local_personal"] = "local_personal"
+    preview_available: Literal[True] = True
+    can_create: Literal[False] = False
+    release_digest: Annotated[str, Field(pattern=r"^sha256:[0-9a-f]{64}$")]
+
+
+class CfdLocalPreviewV2(FinancialContract):
+    schema_version: Literal["cfd-preview-response-v2"] = "cfd-preview-response-v2"
+    saved: Literal[False] = False
+    can_create: Literal[False] = False
+    execution_kind: Literal["local_personal"] = "local_personal"
+    signature_status: Literal["unsigned"] = "unsigned"
+    accepted_calculation: Literal[False] = False
+    broker_authenticated: Literal[False] = False
+    release_digest: Annotated[str, Field(pattern=r"^sha256:[0-9a-f]{64}$")]
+    result: CfdPositionResult | PositionUnavailable
+
+
 class CfdError(FinancialContract):
     code: str
     message: str

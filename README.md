@@ -4,21 +4,35 @@
 
 A cryptocurrency research, trading journal and education platform built incrementally as a full-stack engineering project. It helps explain trading decisions and market mechanics without profit promises or exchange execution.
 
-## Current milestone: Phase 2B.4A — practice accounts and instrument specifications
+## Current direction: Path B — product-first personal journal
 
-**2B.4A is accepted and closed (2026-10-17): 8/8 user-reported manual acceptance scenarios passed.** These are the owner's observations, separate from automated results. Read the [acceptance report](docs/phase-2b-4a-acceptance.md). B1 and disposable-only B2 were subsequently approved. The ten-table CFD schema and migration 0004 are implemented for disposable rehearsal only. Read the [B2 guide](docs/phase-2b-4b-b2.md) and [validation report](docs/phase-2b-4b-b2-validation.md). B3 APIs, normal-journal migration and deployment remain unauthorized.
+**The user-facing web delivery is implemented.** Follow the [delivery guide](docs/web-product-delivery.md) for exact startup commands and limits. Forex/metals previews use a frozen Python payload, explicit digest approval and before/after verification. CFD saving stays disabled. Academy, trivia, an educational market watchlist, a candle lab and a dedicated Trading IQ screen are usable. No Docker/WSL installation or normal-journal migration is included.
+
+The retained [local policy](docs/path-b-local-calculation-policy.md), [Python release specification](docs/path-b-python-release-spec.md) and [product-first roadmap](docs/product-first-roadmap.md) record the P1 proposal and broader accepted-evidence design. This delivery uses the narrower preview-only format `ava-local-preview-build-v1`, not the full accepted-save specification. The delivery guide explains that difference; synthetic records are never promoted into accepted evidence.
+
+Completed capabilities are broader than the last Accounts milestone, but forex/metals previews are now usable and accepted saving remains disabled:
+
+| Area                                                          | Actual status                                                                                                                   |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Crypto journal, performance charts and Trading IQ foundations | Working local features; Phase 2 accepted on nine owner-reported manual passes                                                   |
+| Accounts and immutable specifications                         | 2B.4A accepted on eight owner-reported practice scenarios; not everyday CFD account integration                                 |
+| CFD contracts and calculation engines                         | Tested separate Decimal engine, including multiple exits; not an operational accepted-save service                              |
+| B2 ledger and migration 0004                                  | Ten-table schema and SQLite disposable validation completed; normal journal remains at owner-approved 0003                      |
+| B3A and B3B-R                                                 | Default unavailable boundary and synthetic GETs retained; explicit verified local runner adds unsaved previews; no creation API |
+| R1/R2A                                                        | Read-only assessment/planning; no runtime installed; R2A report remains local/uncommitted                                       |
+| Markets, lab, academy and trivia                              | Educational screener/watchlist, candle exercise, eight lessons and sixteen server-checked questions; no live feed               |
+
+Read the [B2 guide](docs/phase-2b-4b-b2.md), [validation report](docs/phase-2b-4b-b2-validation.md), [B3A guide](docs/phase-2b-4b-b3a.md) and [B3B-R guide](docs/phase-2b-4b-b3b-r.md). Earlier documents retain historical approval language; later explicit owner authorizations and milestone reports define what was actually completed. PostgreSQL compatibility and historical container replay remain **UNVERIFIED**. Signed containers remain a future optional profile; no existing approval or synthetic evidence is silently reclassified.
+
+**2B.4A is accepted and closed (2026-10-17): 8/8 user-reported manual acceptance scenarios passed.** These are the owner's observations, separate from automated results. Read the [acceptance report](docs/phase-2b-4a-acceptance.md).
 
 The new [Accounts workspace guide](docs/phase-2b-4a.md) explains isolated account creation, explicit currencies and immutable specification review. Start its temporary API and separate frontend to test at `http://127.0.0.1:3200/accounts`. Management stays disabled for the normal journal. No new migration or historical account assignment is included. See the [four-step integration roadmap](docs/phase-2b-4-plan.md) and [proposed persistence milestone](docs/phase-2b-4b-plan.md).
 
 Phase 2 is accepted on the owner's nine reported manual passes. Phase 2B adds account/instrument contracts and five additive persistence tables, with disposable migration and backup-restore rehearsals. **The normal local journal was migrated to `0003` after explicit approval and preservation checks**, with verified private backups retained. Read the [normal migration verification](docs/migration-0003-verification.md) and [safe rehearsal report](docs/phase-2b-2.md). Account management now works in disposable practice mode; CFD journal entry integration and broker synchronization remain future milestones.
 
-The separate [CFD input contracts](docs/phase-2b-3a.md), [single-close calculator](docs/phase-2b-3b.md) and [position accounting engine](docs/phase-2b-3c.md) support validated Decimal accounting. The position engine handles open, partial and closed positions, multiple exits, incurred-once costs, fixed original risk and separate synthetic broker-comparison evidence. Run a labelled synthetic example without connecting to a database or broker:
+The separate [CFD input contracts](docs/phase-2b-3a.md), [single-close calculator](docs/phase-2b-3b.md) and [position accounting engine](docs/phase-2b-3c.md) support validated Decimal accounting. The position engine handles open, partial and closed positions, multiple exits, incurred-once costs, fixed original risk and separate synthetic broker-comparison evidence. The standalone synthetic calculation tools remain part of that completed work; they are not the approved API release runtime, and the verified preview runner is the only new API execution path, and accepted saving remains disabled.
 
-```powershell
-.\.venv\Scripts\python.exe services/api/scripts/calculate_cfd_position.py services/api/tests/fixtures/cfd-position-costs.synthetic.json
-```
-
-The single-close tool remains unchanged and deliberately rejects partial positions; use the new position tool for those. Supported modes are explicitly defined forex, linear CFD and index CFD contracts; tick-based modes remain unavailable. CFD journal form/API integration, real broker reconciliation and broker connections are not implemented. Existing crypto calculations and the purple interface are retained.
+The single-close tool remains unchanged and deliberately rejects partial positions; use the new position tool for those. Supported modes are explicitly defined forex, linear CFD and index CFD contracts; tick-based modes remain unavailable. Accepted CFD persistence, real broker reconciliation and broker connections are not implemented. Existing crypto calculations and the purple interface are retained.
 
 The working journal currently supports:
 
@@ -41,7 +55,7 @@ See the [journal guide](docs/trading-journal.md), [Trading IQ architecture](docs
 - API health/readiness, validated server-side frontend integration, backend tests and Playwright flows.
 - GitHub Actions for lint, types, build, backend tests, migration validation and browser tests.
 
-The dashboard starts empty. **No personal trades or live market prices are seeded.** After you save trades, the command center displays recorded journal analytics. Sample mode remains simulated, ephemeral and separate from the database. Market, academy, lab and trivia routes remain roadmap previews.
+The dashboard starts empty. **No personal trades or live market prices are seeded.** After you save trades, the command center displays recorded journal analytics. Sample mode remains simulated, ephemeral and separate from the database. Academy, trivia, the candle lab and educational market watchlist are usable; live market data remains unavailable.
 
 ## Run locally (PowerShell)
 
@@ -101,13 +115,16 @@ docs/             Architecture, setup, tests and deployment notes
 .github/workflows/ Automated validation
 ```
 
-1. **Foundation** — completed.
-2. **Journal** — accepted: CRUD, executions, risk calculations, performance charts, CSV and Trading IQ foundations.
-   **Phase 2B** — account/instrument contracts, safe persistence, validated CFD inputs, single-close/partial-position calculators and comparison evidence; account workflows, application integration, real reconciliation and combined analytics follow before Phase 3.
-3. **Market intelligence** — provider adapters, caching, screener and watchlists.
-4. **Academy** — curated learning paths, lessons and server-validated quiz attempts.
-5. **Gamification** — achievements, streaks and minigames.
-6. **Production readiness** — authentication, ownership authorization, security, accessibility and deployment.
+Foundation and the original crypto journal are completed. The revised delivery order is:
+
+1. **P1 — policy documentation and sign-off:** local-personal amendment, release specification and this roadmap; no capability activation.
+2. **P2 — interactive forex/metals preview:** purple UI, existing CFD engine, explicit synthetic examples and no saving; preview-only implementation delivered; accepted saving remains unavailable.
+3. **P3 — safe saving and retrieval:** atomic CFD creation and versioned verification on new disposable datasets.
+4. **P4 — everyday journal workflow:** editing through revisions, partial exits, corrections, filtering and export.
+5. **P5 — multi-asset analytics and Trading IQ:** account/currency-aware performance and a dedicated insights workspace.
+6. **P6 — persistent personal acceptance:** separately approved dataset/location, backups/restoration and broker-statement reconciliation; no implied normal-journal migration.
+
+Teach lots, pips, leverage and risk during P2. Deliver small curated lesson/quiz slices alongside subsequent journal milestones, then expand the academy/trivia and live market screener/watchlists. Preserve the original five-level education, market-lab and gamification vision without making all modules prerequisites for a usable journal. Authentication and ownership authorization remain prerequisites for any later public/multiuser deployment; local access guards do not replace them. Details and manual acceptance gates are in the [product-first roadmap](docs/product-first-roadmap.md).
 
 Read [architecture](docs/architecture.md), [deployment preparation](docs/deployment.md) and [contribution guidelines](CONTRIBUTING.md).
 

@@ -117,7 +117,11 @@ class CfdAccessMiddleware:
             if not self.workspace.ready:
                 raise CfdTargetRejected("Workspace not ready")
             path, method = scope["path"], scope["method"]
-            allowed = {"/api/v1/cfd/status": "GET", "/api/v1/cfd/preview": "POST"}
+            allowed = {
+                "/api/v1/cfd/status": "GET",
+                "/api/v1/cfd/preview": "POST",
+                "/api/v1/cfd/examples": "GET",
+            }
             if re.fullmatch(
                 r"/api/v1/cfd/positions(?:/[^/]{1,100}(?:/revisions(?:/[^/]{1,9})?)?)?", path
             ):
