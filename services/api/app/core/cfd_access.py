@@ -54,6 +54,7 @@ class CfdAccessMiddleware:
         request_id = str(uuid4())
         scope.setdefault("state", {})["cfd_request_id"] = request_id
         started = False
+        personal_save = False
 
         async def safe_send(message):
             nonlocal started
@@ -88,6 +89,7 @@ class CfdAccessMiddleware:
                 "content-type",
                 "content-encoding",
                 "transfer-encoding",
+                "idempotency-key",
             }
             if any(len(headers.getlist(key)) > 1 for key in critical):
                 await respond(400, "ambiguous_headers", "Supply unambiguous request headers.")
@@ -99,7 +101,11 @@ class CfdAccessMiddleware:
                 local = False
             if (
                 not local
-                or headers.get("host", "").lower() not in {"localhost:8003", "127.0.0.1:8003"}
+                or headers.get("host", "").lower()
+                not in {
+                    f"localhost:{self.settings.api_port}",
+                    f"127.0.0.1:{self.settings.api_port}",
+                }
                 or headers.get("x-ava-local") != "cfd-practice-v1"
                 or "origin" in headers
                 or any(
@@ -129,7 +135,14 @@ class CfdAccessMiddleware:
             if path not in allowed:
                 await respond(404, "route_not_found", "CFD operation is not available.")
                 return
-            if method != allowed[path]:
+            personal_save = (
+                path == "/api/v1/cfd/positions"
+                and method == "POST"
+                and self.settings.allow_creation
+                and getattr(self.workspace, "personal_writes", False)
+                and self.settings.api_port in {8004, 8014}
+            )
+            if method != allowed[path] and not personal_save:
                 await respond(
                     405,
                     "method_not_allowed",
@@ -227,7 +240,12 @@ class CfdAccessMiddleware:
                 await respond(
                     503,
                     "request_timeout",
-                    "The CFD request timed out. No calculation was accepted.",
+                    (
+                        "The save response timed out; its outcome is unconfirmed. "
+                        "Retry the unchanged draft with the same Idempotency-Key."
+                        if personal_save
+                        else "The CFD request timed out. No calculation was accepted."
+                    ),
                 )
         except (CfdTargetRejected, OSError):
             if not started:

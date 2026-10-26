@@ -18,7 +18,15 @@ async function proxy(request: NextRequest) {
       { detail: "Untrusted request origin." },
       { status: 403 },
     );
-  if (process.env.CFD_API_BASE_URL !== "http://127.0.0.1:8003")
+  if (
+    !["http://127.0.0.1:8003", "http://127.0.0.1:8004"].includes(
+      process.env.CFD_API_BASE_URL ?? "",
+    ) &&
+    !(
+      process.env.AVA_E2E === "1" &&
+      process.env.CFD_API_BASE_URL === "http://127.0.0.1:8013"
+    )
+  )
     return Response.json(
       {
         detail:

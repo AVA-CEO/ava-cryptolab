@@ -3,6 +3,9 @@ node_modules
 .next-e2e
 .next-practice
 .local-cfd-preview
+.local-cfd-personal
+.next-p3
+.next-p3-e2e
 .next-cfd-preview
 .venv
 .pytest_cache

@@ -1,0 +1,93 @@
+@import "../product.css";
+
+.cfd-saved-workspace {
+  padding-top: 0;
+  display: grid;
+  gap: 24px;
+}
+.cfd-section-heading {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.cfd-section-heading > div {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+.cfd-section-heading > button {
+  flex-shrink: 0;
+}
+.cfd-table-scroll {
+  overflow-x: auto;
+}
+.cfd-table-scroll caption {
+  text-align: left;
+  color: var(--muted-foreground);
+  padding-bottom: 12px;
+  line-height: 1.6;
+}
+.cfd-empty {
+  padding: 30px 10px;
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  color: var(--muted-foreground);
+}
+.cfd-empty svg {
+  color: var(--primary);
+}
+.cfd-detail {
+  scroll-margin-top: 90px;
+}
+.cfd-detail-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.cfd-detail-facts > div {
+  display: grid;
+  gap: 7px;
+  padding: 14px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+.cfd-learning-note {
+  padding: 18px;
+  border-left: 3px solid var(--primary);
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+  border-radius: 0 10px 10px 0;
+}
+.cfd-learning-note h3 {
+  margin-bottom: 10px;
+}
+.cfd-evidence {
+  display: grid;
+  gap: 12px;
+}
+.cfd-evidence dt {
+  color: var(--muted-foreground);
+}
+.cfd-evidence dd {
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, monospace;
+  font-size: 12px;
+}
+.cfd-detail ul {
+  padding-left: 20px;
+  display: grid;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 760px) {
+  .cfd-section-heading {
+    flex-direction: column;
+  }
+  .cfd-detail-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

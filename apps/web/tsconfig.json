@@ -31,7 +31,11 @@
     ".next-e2e/types/**/*.ts",
     ".next-e2e/dev/types/**/*.ts",
     ".next-practice/types/**/*.ts",
-    ".next-practice/dev/types/**/*.ts"
+    ".next-practice/dev/types/**/*.ts",
+    ".next-p3/types/**/*.ts",
+    ".next-p3/dev/types/**/*.ts",
+    ".next-p3-e2e/types/**/*.ts",
+    ".next-p3-e2e/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
 }

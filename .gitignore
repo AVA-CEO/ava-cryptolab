@@ -25,6 +25,9 @@ coverage/
 .DS_Store
 .tools/
 .local-cfd-preview/
+.local-cfd-personal/
+.next-p3/
+.next-p3-e2e/
 .next-cfd-preview/
 *.tsbuildinfo
 next-env.d.ts

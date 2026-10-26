@@ -117,7 +117,7 @@ class CfdWorkspace:
         shutil.rmtree(self.directory)
 
 
-def provision(workspace):
+def provision(workspace, *, include_read_fixtures=True):
     """Explicit runner provisioning, never API startup; only newly minted DBs."""
     from alembic import command
     from alembic.config import Config
@@ -136,7 +136,8 @@ def provision(workspace):
     with workspace.engine.begin() as connection:
         with Session(bind=connection) as session, session.begin():
             workspace.samples = seed_samples(session)
-            seed_read_fixtures(workspace, session)
+            if include_read_fixtures:
+                seed_read_fixtures(workspace, session)
         if connection.exec_driver_sql("PRAGMA integrity_check").scalar() != "ok":
             raise CfdTargetRejected("New synthetic fixture database failed integrity validation")
         if connection.exec_driver_sql("PRAGMA foreign_key_check").all():

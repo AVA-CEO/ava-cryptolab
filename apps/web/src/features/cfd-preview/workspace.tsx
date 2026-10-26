@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Calculator, Plus, Trash2, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  savedPositionSchema,
+  type SavedPosition,
+} from "@/features/cfd-journal/contracts";
 import "@/features/product.css";
 
 type Execution = {
@@ -32,6 +36,8 @@ type Command = {
   rounding: object;
   as_of: string;
   recognition_policy: string;
+  release_digest?: string;
+  broker_evidence?: { evidence_id: string; [key: string]: unknown }[];
 };
 type Measurement = {
   raw: string | null;
@@ -61,7 +67,37 @@ function show(value: Measurement | undefined, unit = "") {
     : `${value.rounded} ${value.currency ?? unit}`;
 }
 
-export function CfdPreview() {
+function freshDraft(
+  command: Command,
+  reference = crypto.randomUUID(),
+): Command {
+  const value = structuredClone(command);
+  value.position_reference = reference;
+  value.trade.entry.execution_id = `${reference}:entry`;
+  value.trade.exits.forEach((exit, i) => {
+    exit.execution_id = `${reference}:exit:${i}`;
+  });
+  value.broker_evidence?.forEach((evidence, i) => {
+    evidence.evidence_id = `${reference}:evidence:${i}`;
+  });
+  return value;
+}
+
+export function CfdPreview({
+  journalMode = false,
+  onSaved,
+  onAccount,
+}: {
+  journalMode?: boolean;
+  onSaved?: (position: SavedPosition) => void;
+  onAccount?: (accountId: string) => void;
+}) {
+  const endpoint = journalMode
+    ? "/api/cfd-journal?action=preview"
+    : "/api/cfd-preview";
+  const examplesEndpoint = journalMode
+    ? "/api/cfd-journal?action=examples"
+    : "/api/cfd-preview?view=examples";
   const [examples, setExamples] = useState<Record<string, Command>>({});
   const [symbol, setSymbol] = useState("EURUSD");
   const [draft, setDraft] = useState<Command | null>(null);
@@ -73,30 +109,69 @@ export function CfdPreview() {
   const [swap, setSwap] = useState("0");
   const [fee, setFee] = useState("0");
   const [rate, setRate] = useState("");
+  const [canCreate, setCanCreate] = useState(false);
+  const [releaseDigest, setReleaseDigest] = useState("");
+  const [ticket, setTicket] = useState<{
+    command: Command;
+    key: string;
+  } | null>(null);
+  const [savedId, setSavedId] = useState("");
+  const saving = useRef(false);
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/cfd-preview?view=examples", { signal: controller.signal })
-      .then(async (r) => {
-        const body = await r.json();
-        if (!r.ok)
-          throw new Error(
-            body.detail ?? body.error?.message ?? "Preview unavailable.",
-          );
+    const load = async (url: string) => {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        cache: "no-store",
+      });
+      const body = await response.json();
+      if (!response.ok)
+        throw new Error(
+          body.detail ?? body.error?.message ?? "Preview unavailable.",
+        );
+      return body;
+    };
+    Promise.all([
+      load(examplesEndpoint),
+      load(journalMode ? "/api/cfd-journal?action=status" : "/api/cfd-preview"),
+    ])
+      .then(([body, status]) => {
         setExamples(body);
-        setDraft(structuredClone(body.EURUSD));
+        const initial = {
+          ...body.EURUSD,
+          release_digest: status?.release_digest,
+        };
+        setDraft(journalMode ? freshDraft(initial) : structuredClone(initial));
+        setCanCreate(journalMode && status?.can_create === true);
+        setReleaseDigest(status?.release_digest ?? "");
+        onAccount?.(body.EURUSD.account_id);
       })
       .catch((e) => {
         if (e.name !== "AbortError") setError(e.message);
       });
     return () => controller.abort();
-  }, []);
+  }, [examplesEndpoint, journalMode, onAccount]);
+  function changed() {
+    if (journalMode) {
+      const reference = crypto.randomUUID();
+      setDraft((previous) =>
+        previous ? freshDraft(previous, reference) : previous,
+      );
+      setTicket(null);
+      setSavedId("");
+    }
+    setStale(true);
+  }
   function edit(change: (value: Command) => void) {
+    const reference = journalMode ? crypto.randomUUID() : undefined;
     setDraft((previous) => {
       if (!previous) return previous;
       const next = structuredClone(previous);
       change(next);
-      return next;
+      return journalMode ? freshDraft(next, reference) : next;
     });
+    setTicket(null);
+    setSavedId("");
     setStale(true);
   }
   async function calculate() {
@@ -113,7 +188,9 @@ export function CfdPreview() {
     )
       .filter(([, amount]) => amount && amount !== "0")
       .map(([kind, amount]) => ({
-        adjustment_id: `preview-${kind}`,
+        adjustment_id: journalMode
+          ? `${request.position_reference}:cost:${kind}`
+          : `preview-${kind}`,
         kind,
         amount,
         currency: symbol === "USDJPY" ? "JPY" : "USD",
@@ -130,8 +207,11 @@ export function CfdPreview() {
       request.trade.reporting_policy = "explicit_rates";
       const observations: object[] = [];
       const conversion = (id: string, at: string) => {
+        const reference = journalMode
+          ? `${request.position_reference}:${id}`
+          : id;
         observations.push({
-          conversion_id: id,
+          conversion_id: reference,
           from_currency: "JPY",
           to_currency: "USD",
           rate,
@@ -143,7 +223,7 @@ export function CfdPreview() {
             reference: "Hypothetical same-time FX observation, not live data",
           },
         });
-        return id;
+        return reference;
       };
       if (request.trade.original_stop)
         request.trade.risk_conversion_id = conversion(
@@ -165,7 +245,7 @@ export function CfdPreview() {
       request.trade.conversions = observations;
     }
     try {
-      const response = await fetch("/api/cfd-preview", {
+      const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
@@ -182,6 +262,25 @@ export function CfdPreview() {
         );
       setResult(body.result);
       setStale(false);
+      if (journalMode) {
+        const eligible =
+          canCreate &&
+          body.can_create === true &&
+          body.result?.status === "calculated";
+        const command = {
+          ...structuredClone(request),
+          release_digest: body.release_digest,
+        };
+        const key = crypto.randomUUID();
+        setTicket((previous) =>
+          eligible && /^sha256:[0-9a-f]{64}$/.test(body.release_digest)
+            ? previous &&
+              JSON.stringify(previous.command) === JSON.stringify(command)
+              ? previous
+              : { command, key }
+            : null,
+        );
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Calculation unavailable");
       setStale(true);
@@ -189,10 +288,58 @@ export function CfdPreview() {
       setBusy(false);
     }
   }
+  async function save() {
+    if (!ticket || stale || !canCreate || savedId || saving.current) return;
+    saving.current = true;
+    setBusy(true);
+    setError("");
+    try {
+      const response = await fetch("/api/cfd-journal?action=positions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Idempotency-Key": ticket.key,
+        },
+        body: JSON.stringify(ticket.command),
+      });
+      const raw = await response.json();
+      if (!response.ok)
+        throw new Error(
+          raw.error?.message ??
+            raw.detail ??
+            "Save unavailable. Retry this unchanged draft with its existing receipt key.",
+        );
+      const parsed = savedPositionSchema.safeParse(raw);
+      if (
+        !parsed.success ||
+        parsed.data.account_id !== ticket.command.account_id ||
+        parsed.data.position_id !== ticket.command.position_reference ||
+        parsed.data.input.trade.snapshot.snapshot_id !==
+          ticket.command.snapshot_id
+      )
+        throw new Error(
+          "Saved response could not be verified; financial values withheld. Reload the journal or retry this unchanged draft.",
+        );
+      const position = parsed.data;
+      setSavedId(position.position_id);
+      onSaved?.(position);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? `${error.message} The receipt key is retained for an unchanged retry.`
+          : "Save response unavailable. Retry without changing this draft.",
+      );
+    } finally {
+      saving.current = false;
+      setBusy(false);
+    }
+  }
   return (
     <div className="page-content product-page">
       <p className="eyebrow">AVA TRADING LAB</p>
-      <h1>Forex & metals preview</h1>
+      <h1>
+        {journalMode ? "Record a CFD position" : "Forex & metals preview"}
+      </h1>
       <p className="page-subtitle">
         Understand the trade before you record it. Exact Python calculations,
         transparent currencies.
@@ -201,7 +348,8 @@ export function CfdPreview() {
         <ShieldCheck size={18} />
         <span>
           Local practice · synthetic contract specifications, not Bybit rules ·
-          unsigned pinned release · no saving
+          unsigned pinned release ·{" "}
+          {journalMode ? "new disposable journal session" : "no saving"}
         </span>
       </div>
       {error && (
@@ -237,7 +385,16 @@ export function CfdPreview() {
                     value={symbol}
                     onChange={(e) => {
                       setSymbol(e.target.value);
-                      setDraft(structuredClone(examples[e.target.value]));
+                      const next = {
+                        ...examples[e.target.value],
+                        release_digest: releaseDigest || undefined,
+                      };
+                      setDraft(
+                        journalMode ? freshDraft(next) : structuredClone(next),
+                      );
+                      onAccount?.(examples[e.target.value].account_id);
+                      setTicket(null);
+                      setSavedId("");
                       setResult(null);
                       setCost("0");
                       setSwap("0");
@@ -342,7 +499,7 @@ export function CfdPreview() {
                 preview an open position.
               </p>
               {draft.trade.exits.map((exit, i) => (
-                <fieldset key={exit.execution_id} className="product-exit">
+                <fieldset key={i} className="product-exit">
                   <legend>Exit {i + 1}</legend>
                   <div className="product-fields">
                     <label>
@@ -417,7 +574,7 @@ export function CfdPreview() {
                     value={cost}
                     onChange={(e) => {
                       setCost(e.target.value);
-                      setStale(true);
+                      changed();
                     }}
                   />
                   <small>
@@ -432,7 +589,7 @@ export function CfdPreview() {
                     value={swap}
                     onChange={(e) => {
                       setSwap(e.target.value);
-                      setStale(true);
+                      changed();
                     }}
                   />
                   <small>Recognized once at the calculation cutoff.</small>
@@ -444,7 +601,7 @@ export function CfdPreview() {
                     value={fee}
                     onChange={(e) => {
                       setFee(e.target.value);
-                      setStale(true);
+                      changed();
                     }}
                   />
                 </label>
@@ -457,7 +614,7 @@ export function CfdPreview() {
                       value={rate}
                       onChange={(e) => {
                         setRate(e.target.value);
-                        setStale(true);
+                        changed();
                       }}
                     />
                     <small>
@@ -499,7 +656,9 @@ export function CfdPreview() {
             className="panel product-card product-result"
             aria-live="polite"
           >
-            <span className="badge">UNSAVED PREVIEW</span>
+            <span className="badge">
+              {savedId ? "SAVED · LOCAL PRACTICE" : "UNSAVED PREVIEW"}
+            </span>
             <h2>Your hypothetical outcome</h2>
             {stale && result && (
               <p className="product-notice">
@@ -541,9 +700,9 @@ export function CfdPreview() {
                               className={
                                 String(label).includes("PnL") &&
                                 (value as Measurement).raw
-                                  ? Number((value as Measurement).raw) >= 0
-                                    ? "positive"
-                                    : "negative"
+                                  ? (value as Measurement).raw?.startsWith("-")
+                                    ? "negative"
+                                    : "positive"
                                   : ""
                               }
                             >
@@ -566,6 +725,56 @@ export function CfdPreview() {
               partial exit. Leverage does not multiply profit again. This is not
               a broker statement, margin calculation or liquidation estimate.
             </p>
+            {journalMode && (
+              <div className="product-outcome">
+                <h3>
+                  {savedId ? "Position saved" : "Calculate, review, then save"}
+                </h3>
+                <p>
+                  {savedId
+                    ? "This locally accepted calculation is saved in this disposable session. Refresh and reopen it in the journal below. It is not broker-authenticated evidence."
+                    : "R compares realized net PnL with original planned risk. Your original entry, lots, stop, specification and dated currency evidence will be preserved with the saved calculation."}
+                </p>
+                {!canCreate && (
+                  <p>
+                    Saving is locked until the local release and persistence
+                    safeguards are qualified.
+                  </p>
+                )}
+                <Button
+                  onClick={save}
+                  disabled={busy || !ticket || stale || !canCreate || !!savedId}
+                >
+                  {savedId
+                    ? "Saved — reopen below"
+                    : busy
+                      ? "Working…"
+                      : "Save verified position"}
+                </Button>
+                {savedId && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const reference = crypto.randomUUID();
+                      setDraft((previous) =>
+                        previous ? freshDraft(previous, reference) : previous,
+                      );
+                      setResult(null);
+                      setTicket(null);
+                      setSavedId("");
+                      setStale(false);
+                      setError("");
+                    }}
+                  >
+                    Start another practice trade
+                  </Button>
+                )}
+                <small>
+                  Retries reuse the same receipt key and exact reviewed inputs.
+                  Editing an already saved position is not available.
+                </small>
+              </div>
+            )}
             <Link className="product-link" href="/academy">
               Learn lots, leverage and risk →
             </Link>

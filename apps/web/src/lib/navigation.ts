@@ -9,6 +9,14 @@ import {
 } from "lucide-react";
 export const navigation = [
   {
+    href: "/cfd-journal",
+    label: "CFD Journal",
+    icon: BookOpen,
+    phase: 2,
+    description:
+      "Save and reopen verified calculations in a new practice session.",
+  },
+  {
     href: "/insights",
     label: "AVA Trading IQ",
     icon: LayoutDashboard,

@@ -482,3 +482,23 @@ Trivia answers are checked by the Next.js server. The question catalog omits ans
 In the NEW practice website, calculate the default EURUSD partial exit: gross 8 USD, original risk 20 USD, 0.06 lots remaining. Change exit lots to 0.11 and observe validation rather than an invented result. Check that no Save button exists. Then complete a lesson, answer a quiz and refresh: learning progress should return, while no financial preview was saved. Explain why persisting a learning checkbox is different from accepting a financial trade.
 
 You learned frontend/server boundaries, typed financial results, explicit release selection, regression testing, browser storage versus trusted records, and the difference between Vercel frontend hosting and durable financial persistence. No normal journal, preserved backup, existing practice data or database migration was changed by this delivery.
+
+## P3 — one practice trade, one complete receipt
+
+The [P3 journal](p3-cfd-journal.md) connects the verified Python calculator to a new disposable database and a purple save/reopen screen. Existing journals and practice sessions are not reused. A browser refresh keeps the saved trade during that runner session; stopping it normally removes the temporary database. This is practice acceptance, not durable personal storage.
+
+An **atomic transaction** is like putting the entire trade into one sealed envelope. Entry, exits, costs, FX, original risk, calculated result and receipt all go in together. If a step fails, the transaction rolls back and no half-saved trade remains. **Foreign keys** keep the pages attached to the right account, position and specification. Existing database triggers prevent rewriting sealed pages.
+
+An **idempotency key** is a receipt number for one exact submission. If saving succeeds but the internet-style response gets lost between the local server and browser, retrying with the same key and unchanged inputs returns the original verified position. Changing inputs under that key is a conflict. Two clicks cannot silently make two copies of the same position.
+
+The **original risk** is a fixed measuring stick: 0.10 lots with a declared 100000 contract, entry 1.10000 and stop 1.09800 risks 20 USD before costs. Closing 0.04 lots at 1.10200 realizes 8 USD, leaves 0.06 lots, and gives 0.40R before costs. Closing the rest at 1.10300 adds 18 USD. Total gross is 26 USD; signed costs of -4 USD make net 22 USD and realized R 1.10. R does not shrink its denominator after a partial exit.
+
+A **verified read** checks saved hashes and rebuilds the original input from the individual ledger rows. It shows the preserved result without running today's calculator or using today's FX rates. Hash verification catches inconsistent evidence; it does not prove the input came from a broker or defeat an attacker who controls the whole machine. **Replay** would execute the exact historical release again; P3 does not claim that capability.
+
+P3 uses the complete local release manifest, retained code/dependency artifacts, interpreter identity and explicit preview/save approval. Its local build hash identifies Python software, not a container image. Existing synthetic fixture manifests keep their separate meaning. The local worker is bounded and verified, but runs with the user's permissions rather than inside an OS sandbox.
+
+### Exercise: save, refresh, explain
+
+Open the NEW disposable CFD journal. Calculate and save the default EURUSD partial trade. Write down its position ID, net PnL, original risk, R and remaining lots. Refresh and reopen it: those facts must match. Start another draft, add the second exit and -4 USD total costs, then verify 22 USD and 1.10R. Open the evidence section and find the input/result hashes. Explain why a result can be locally accepted with synthetic inputs while still not being a broker-authenticated record.
+
+You learned atomic transactions, account-scoped foreign keys, immutable evidence, idempotent retries, canonical financial strings, display precision and verification versus replay. Editing saved trades, durable personal use, actual broker reconciliation and cloud deployment require later work and approval.
